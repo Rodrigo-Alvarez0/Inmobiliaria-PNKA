@@ -10,8 +10,8 @@ declare(strict_types=1);
 define('BD_HOST',     getenv('DB_HOST')     ?: 'localhost');
 define('BD_PUERTO',   getenv('DB_PORT')     ?: '3306');
 define('BD_NOMBRE',   getenv('DB_NAME')     ?: 'PENKAA_NOGUARDA');
-define('BD_USUARIO',  getenv('DB_USER')     ?: 'root');
-define('BD_CONTRASENA', getenv('DB_PASS')   ?: '');
+define('BD_USUARIO',  getenv('DB_USER')     ?: 'pnk_admin');
+define('BD_CONTRASENA', getenv('DB_PASS')   ?: 'PnK_Admin2026#');
 define('BD_CHARSET',  'utf8mb4');
 
 // ─── Configuración general ────────────────────────────────────────────────────
