@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi perfil — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <style>
+    .perfil-hero {
+      background: linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 50%,#0284c7 100%);
+      border-radius: 1.25rem;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2rem;
+      display: flex; align-items: center; gap: 2rem;
+      flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(29,78,216,.3);
+    }
+    .perfil-avatar-grande {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      border: 3px solid rgba(255,255,255,.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.25rem; font-weight: 800; color: #fff;
+      flex-shrink: 0; backdrop-filter: blur(8px);
+    }
+    .perfil-info { flex: 1; min-width: 0; }
+    .perfil-nombre { color: #fff; font-size: 1.75rem; font-weight: 800; margin-bottom: .25rem; }
+    .perfil-correo { color: rgba(255,255,255,.7); font-size: .9375rem; }
+    .perfil-meta   { display: flex; gap: 1rem; margin-top: .75rem; flex-wrap: wrap; }
+    .perfil-meta-item { font-size: .8125rem; color: rgba(255,255,255,.6); }
+    .perfil-meta-item strong { color: rgba(255,255,255,.9); }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+
+  <!-- Sidebar dinámico según rol -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="/" class="sidebar__logo">
+      <div class="sidebar__logo-icono" aria-hidden="true">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav" id="sidebar-nav">
+      <!-- Se genera dinámicamente por rol -->
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Mi perfil</h1>
+    </div>
+    <div class="header__acciones">
+      <span id="badge-rol" class="badge"></span>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Hero del perfil -->
+    <div class="perfil-hero" id="perfil-hero" role="region" aria-label="Información de perfil">
+      <div class="perfil-avatar-grande" id="perfil-avatar" aria-hidden="true">…</div>
+      <div class="perfil-info">
+        <div class="perfil-nombre" id="perfil-nombre-completo">Cargando…</div>
+        <div class="perfil-correo" id="perfil-correo-display">—</div>
+        <div class="perfil-meta">
+          <div class="perfil-meta-item">Rol: <strong id="perfil-rol-display">—</strong></div>
+          <div class="perfil-meta-item">Miembro desde: <strong id="perfil-desde">—</strong></div>
+          <div class="perfil-meta-item">Último acceso: <strong id="perfil-ultimo">—</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:1.5rem;align-items:start">
+
+      <!-- ─── Editar datos personales ──────────────────── -->
+      <section aria-labelledby="titulo-datos">
+        <div class="tarjeta">
+          <div class="tarjeta__cabecera">
+            <h2 class="tarjeta__titulo" id="titulo-datos">Datos personales</h2>
+          </div>
+          <div class="tarjeta__cuerpo">
+            <form id="form-perfil" novalidate>
+              <div class="grupo-campo">
+                <label class="campo__etiqueta" for="pf-nombre">Nombre <span class="requerido">*</span></label>
+                <input type="text" id="pf-nombre" name="nombre" class="campo__control"
+                  data-validar="requerido|minLong:2" aria-describedby="msg-pf-nombre" required>
+                <span id="msg-pf-nombre" class="campo__mensaje" aria-live="polite"></span>
+              </div>
+              <div class="grupo-campo">
+                <label class="campo__etiqueta" for="pf-apellido">Apellido <span class="requerido">*</span></label>
+                <input type="text" id="pf-apellido" name="apellido" class="campo__control"
+                  data-validar="requerido|minLong:2" aria-describedby="msg-pf-apellido" required>
+                <span id="msg-pf-apellido" class="campo__mensaje" aria-live="polite"></span>
+              </div>
+              <div class="grupo-campo">
+                <label class="campo__etiqueta">Correo electrónico</label>
+                <input type="email" id="pf-correo" class="campo__control" disabled
+                  style="opacity:.6;cursor:not-allowed" aria-label="Correo (no editable)">
+                <span class="campo__mensaje campo__mensaje--ayuda" style="display:block">El correo no puede modificarse por seguridad.</span>
+              </div>
+              <button type="submit" class="btn btn-primario" id="btn-guardar-perfil">
+                Guardar cambios
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── Cambiar contraseña ────────────────────────── -->
+      <section aria-labelledby="titulo-seguridad">
+        <div class="tarjeta">
+          <div class="tarjeta__cabecera">
+            <h2 class="tarjeta__titulo" id="titulo-seguridad">Seguridad</h2>
+          </div>
+          <div class="tarjeta__cuerpo">
+            <form id="form-contra" novalidate>
+              <div class="grupo-campo">
+                <label class="campo__etiqueta" for="pf-actual">Contraseña actual <span class="requerido">*</span></label>
+                <input type="password" id="pf-actual" name="contrasena_actual" class="campo__control"
+                  data-validar="requerido" aria-describedby="msg-pf-actual" required
+                  placeholder="••••••••">
+                <span id="msg-pf-actual" class="campo__mensaje" aria-live="polite"></span>
+              </div>
+              <div class="grupo-campo">
+                <label class="campo__etiqueta" for="pf-nueva">Nueva contraseña <span class="requerido">*</span></label>
+                <input type="password" id="pf-nueva" name="contrasena_nueva" class="campo__control"
+                  data-validar="requerido|contrasena"
+                  data-fuerza-contrasena="fuerza-perfil"
+                  aria-describedby="msg-pf-nueva fuerza-perfil" required
+                  placeholder="Mínimo 8 caracteres">
+                <span id="msg-pf-nueva" class="campo__mensaje" aria-live="polite"></span>
+                <div id="fuerza-perfil" class="fuerza-contrasena">
+                  <div class="fuerza-contrasena__barra"><div class="fuerza-contrasena__progreso"></div></div>
+                  <div class="fuerza-contrasena__texto"></div>
+                </div>
+              </div>
+              <div class="grupo-campo">
+                <label class="campo__etiqueta" for="pf-confirmar">Confirmar nueva contraseña <span class="requerido">*</span></label>
+                <input type="password" id="pf-confirmar" name="confirmar" class="campo__control"
+                  data-validar="requerido|igualar:pf-nueva" aria-describedby="msg-pf-conf" required
+                  placeholder="Repita la contraseña">
+                <span id="msg-pf-conf" class="campo__mensaje" aria-live="polite"></span>
+              </div>
+
+              <!-- Requisitos visuales -->
+              <div style="background:var(--bg-pagina);border-radius:.625rem;padding:1rem;margin-bottom:1.25rem;font-size:.8125rem">
+                <div style="font-weight:600;margin-bottom:.5rem;color:var(--texto-secundario)">La contraseña debe tener:</div>
+                <ul style="list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.25rem" id="lista-requisitos">
+                  <li data-req="largo">⬜ Al menos 8 caracteres</li>
+                  <li data-req="mayus">⬜ Una mayúscula</li>
+                  <li data-req="minus">⬜ Una minúscula</li>
+                  <li data-req="numero">⬜ Un número</li>
+                  <li data-req="simbolo">⬜ Un símbolo (!@#…)</li>
+                </ul>
+              </div>
+
+              <button type="submit" class="btn btn-exito" id="btn-cambiar-contra">
+                🔒 Actualizar contraseña
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+</div>
+
+<script src="../js/utilidades.js"></script>
+<script>
+'use strict';
+
+// ─── Inicio ────────────────────────────────────────────────────────────────────
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = 'login.html'; return; }
+
+  Sesion.aplicarPermisos();
+  renderizarSidebar();
+  await cargarPerfil();
+  enlazarEventos();
+})();
+
+// ─── Sidebar dinámico ─────────────────────────────────────────────────────────
+function renderizarSidebar() {
+  const base = Sesion.tieneNivel(5) ? '/html/admin/'
+             : Sesion.tieneNivel(4) ? '/html/propietario/'
+             : Sesion.tieneNivel(3) ? '/html/gestor/'
+             : '/html/usuario/';
+
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = `
+    <a href="${base}dashboard.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+    ${Sesion.tieneNivel(3) ? `<a href="${base}productos.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">📦</span> Productos</a>` : ''}
+    ${Sesion.tieneNivel(3) ? `<a href="${base}pedidos.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>` : ''}
+    ${Sesion.tieneNivel(4) ? `<a href="${base}usuarios.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">👥</span> Usuarios</a>` : ''}
+    <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+    <a href="/perfil.html" class="sidebar__enlace sidebar__enlace--activo" aria-current="page">
+      <span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>`;
+
+  document.getElementById('sidebar-nombre').textContent = `${Sesion.datos.nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-rol').textContent    = capitalizar(Sesion.nombreRol);
+  document.getElementById('sidebar-avatar').textContent = Sesion.nombre.charAt(0).toUpperCase();
+  const badge = document.getElementById('badge-rol');
+  badge.textContent = capitalizar(Sesion.nombreRol);
+  badge.className   = `badge badge--${Sesion.nombreRol}`;
+}
+
+// ─── Cargar perfil ────────────────────────────────────────────────────────────
+async function cargarPerfil() {
+  const res = await API.get('/php/modules/perfil.php', { accion: 'obtener' });
+  if (!res.exito) return;
+  const p = res.datos.perfil;
+
+  document.getElementById('perfil-avatar').textContent          = p.nombre.charAt(0).toUpperCase();
+  document.getElementById('perfil-nombre-completo').textContent = `${p.nombre} ${p.apellido}`;
+  document.getElementById('perfil-correo-display').textContent  = p.correo;
+  document.getElementById('perfil-rol-display').textContent     = capitalizar(p.nombre_rol);
+  document.getElementById('perfil-desde').textContent           = fecha(p.creado_en);
+  document.getElementById('perfil-ultimo').textContent          = fecha(p.ultimo_acceso);
+
+  document.getElementById('pf-nombre').value   = p.nombre;
+  document.getElementById('pf-apellido').value = p.apellido;
+  document.getElementById('pf-correo').value   = p.correo;
+}
+
+// ─── Formulario datos personales ──────────────────────────────────────────────
+document.getElementById('form-perfil').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await enviarFormulario(e.target, '/php/modules/perfil.php', 'actualizar', {
+    formularioCSRF: 'perfil',
+    onExito(res) {
+      Toast.mostrar('exito', 'Perfil actualizado', res.mensaje);
+      cargarPerfil();
+    },
+    onError(res) { Toast.mostrar('error', 'Error', res.mensaje); },
+  });
+});
+
+// ─── Formulario contraseña ────────────────────────────────────────────────────
+document.getElementById('form-contra').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await enviarFormulario(e.target, '/php/modules/perfil.php', 'cambiar_contrasena', {
+    formularioCSRF: 'cambiar_contra',
+    onExito(res) {
+      Toast.mostrar('exito', 'Contraseña actualizada', res.mensaje, 4000);
+      e.target.reset();
+      Validador.limpiar(e.target);
+      document.querySelectorAll('[data-req]').forEach(li => { li.textContent = '⬜ ' + li.textContent.slice(2); });
+    },
+    onError(res) { Toast.mostrar('error', 'Error', res.mensaje); },
+  });
+});
+
+// ─── Requisitos visuales de contraseña ───────────────────────────────────────
+function enlazarEventos() {
+  document.getElementById('pf-nueva').addEventListener('input', (e) => {
+    const v = e.target.value;
+    const checks = {
+      largo:   v.length >= 8,
+      mayus:   /[A-Z]/.test(v),
+      minus:   /[a-z]/.test(v),
+      numero:  /[0-9]/.test(v),
+      simbolo: /[\W_]/.test(v),
+    };
+    const textos = {
+      largo:'Al menos 8 caracteres', mayus:'Una mayúscula',
+      minus:'Una minúscula', numero:'Un número', simbolo:'Un símbolo (!@#…)',
+    };
+    Object.entries(checks).forEach(([req, ok]) => {
+      const li = document.querySelector(`[data-req="${req}"]`);
+      if (li) {
+        li.textContent = (ok ? '✅' : '⬜') + ' ' + textos[req];
+        li.style.color = ok ? 'var(--color-exito)' : '';
+      }
+    });
+  });
+}
+
+const capitalizar = (s) => String(s ?? '').charAt(0).toUpperCase() + String(s ?? '').slice(1);
+const fecha = (s) => s ? new Date(s).toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'}) : 'Nunca';
+</script>
+</body>
+</html>

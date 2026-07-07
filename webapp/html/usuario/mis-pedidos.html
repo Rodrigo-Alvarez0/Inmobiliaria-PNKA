@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis pedidos — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+  <style>
+    .pedido-item {
+      background: var(--bg-tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: var(--sombra-sm);
+      transition: var(--transicion);
+    }
+    .pedido-item:hover { box-shadow: var(--sombra); }
+    .pedido-item__cabecera {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.5rem; gap: 1rem; flex-wrap: wrap;
+      border-bottom: 1px solid var(--borde);
+      background: var(--bg-pagina);
+    }
+    .pedido-item__num   { font-weight: 800; font-size: 1rem; color: var(--color-primario); }
+    .pedido-item__fecha { font-size: .8125rem; color: var(--texto-tenue); }
+    .pedido-item__cuerpo { padding: 1.25rem 1.5rem; }
+    .timeline {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: .5rem;
+    }
+    .timeline__paso {
+      display: flex; flex-direction: column; align-items: center;
+      flex: 1; min-width: 80px; text-align: center;
+    }
+    .timeline__circulo {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .875rem; border: 2px solid var(--borde);
+      background: var(--bg-tarjeta); z-index: 1;
+    }
+    .timeline__circulo--activo { background: var(--color-primario); border-color: var(--color-primario); color: #fff; }
+    .timeline__circulo--hecho  { background: var(--color-exito);    border-color: var(--color-exito);    color: #fff; }
+    .timeline__linea {
+      flex: 1; height: 2px; background: var(--borde); margin-top: -16px; min-width: 30px;
+    }
+    .timeline__linea--hecha { background: var(--color-exito); }
+    .timeline__etiqueta { font-size: .6875rem; color: var(--texto-tenue); margin-top: .375rem; font-weight: 500; }
+    .timeline__etiqueta--activa { color: var(--color-primario); font-weight: 700; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html"   class="sidebar__enlace"><span class="sidebar__enlace-icono">🏠</span> Mi panel</a>
+      <a href="mis-pedidos.html" class="sidebar__enlace sidebar__enlace--activo" aria-current="page">
+        <span class="sidebar__enlace-icono">🛒</span> Mis pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"   class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol">Usuario</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Mis pedidos</h1>
+    </div>
+    <div class="header__acciones">
+      <span class="badge badge--usuario">Usuario</span>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Filtros de estado -->
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem" role="group" aria-label="Filtrar pedidos">
+      <button class="btn btn-primario btn-sm filtro-estado" data-estado="">Todos</button>
+      <button class="btn btn-tenue   btn-sm filtro-estado" data-estado="pendiente">⏳ Pendiente</button>
+      <button class="btn btn-tenue   btn-sm filtro-estado" data-estado="confirmado">✅ Confirmado</button>
+      <button class="btn btn-tenue   btn-sm filtro-estado" data-estado="enviado">📦 Enviado</button>
+      <button class="btn btn-tenue   btn-sm filtro-estado" data-estado="entregado">🏠 Entregado</button>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div id="lista-pedidos" style="display:flex;flex-direction:column;gap:1.25rem">
+      <div style="text-align:center;padding:3rem;color:var(--texto-tenue)">
+        <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando pedidos…
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion" id="paginacion-mispeds" style="margin-top:1rem;background:var(--bg-tarjeta);border:1px solid var(--borde);border-radius:1rem;padding:1rem 1.5rem">
+      <div class="paginacion__info">—</div>
+      <div class="paginacion__botones" role="navigation" aria-label="Páginas"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal detalle pedido -->
+<div id="modal-detalle-ped" class="modal-overlay" role="dialog" aria-modal="true"
+     aria-labelledby="titulo-detalle-ped" hidden aria-hidden="true">
+  <div class="modal" style="max-width:560px">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="titulo-detalle-ped">Detalle del pedido</h2>
+      <button class="modal__cerrar" data-cerrar-modal="modal-detalle-ped">✕</button>
+    </div>
+    <div class="modal__cuerpo" id="cuerpo-detalle-ped">—</div>
+    <div class="modal__pie">
+      <button class="btn btn-tenue" data-cerrar-modal="modal-detalle-ped">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+const PASOS_ESTADO = ['pendiente','confirmado','enviado','entregado'];
+const estado = { pagina: 1, limite: 10, estadoFiltro: '' };
+
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+
+  const nombre = Sesion.nombre;
+  document.getElementById('sidebar-nombre').textContent = `${nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-avatar').textContent = nombre.charAt(0).toUpperCase();
+
+  await cargarPedidos();
+
+  document.querySelectorAll('.filtro-estado').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro-estado').forEach(b => {
+        b.className = 'btn btn-tenue btn-sm filtro-estado';
+      });
+      btn.className = 'btn btn-primario btn-sm filtro-estado';
+      cargarPedidos({ estadoFiltro: btn.dataset.estado, pagina: 1 });
+    });
+  });
+})();
+
+async function cargarPedidos(extra = {}) {
+  Object.assign(estado, extra);
+  document.getElementById('lista-pedidos').innerHTML =
+    `<div style="text-align:center;padding:3rem;color:var(--texto-tenue)">
+      <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…</div>`;
+
+  const params = { pagina: estado.pagina, limite: estado.limite };
+  if (estado.estadoFiltro) params.estado = estado.estadoFiltro;
+
+  const res  = await API.get('/php/modules/pedidos.php', params);
+  const data = res.datos ?? {};
+  renderizarPedidos(data.pedidos ?? []);
+  renderizarPaginacion(data.total ?? 0, data.total_paginas ?? 0);
+}
+
+function renderizarPedidos(pedidos) {
+  const lista = document.getElementById('lista-pedidos');
+  if (!pedidos.length) {
+    lista.innerHTML = `
+      <div class="estado-vacio" style="background:var(--bg-tarjeta);border:1px solid var(--borde);border-radius:1rem;padding:3rem">
+        <div class="estado-vacio__icono">🛍️</div>
+        <div class="estado-vacio__titulo">Sin pedidos</div>
+        <div class="estado-vacio__desc">No tienes pedidos con este estado.</div>
+      </div>`;
+    return;
+  }
+
+  lista.innerHTML = pedidos.map(p => {
+    const indiceActual = PASOS_ESTADO.indexOf(p.estado);
+    const timeline     = PASOS_ESTADO.map((paso, i) => {
+      const hecho  = i < indiceActual || p.estado === 'entregado';
+      const activo = i === indiceActual;
+      const clase  = hecho ? 'hecho' : activo ? 'activo' : '';
+      const iconos = { pendiente:'⏳', confirmado:'✅', enviado:'📦', entregado:'🏠' };
+      return `
+        ${i > 0 ? `<div class="timeline__linea ${hecho ? 'timeline__linea--hecha' : ''}"></div>` : ''}
+        <div class="timeline__paso">
+          <div class="timeline__circulo ${clase ? 'timeline__circulo--' + clase : ''}" aria-label="${paso} ${hecho?'completado':activo?'actual':'pendiente'}">
+            ${iconos[paso]}
+          </div>
+          <div class="timeline__etiqueta ${activo ? 'timeline__etiqueta--activa' : ''}">${capitalizar(paso)}</div>
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="pedido-item">
+      <div class="pedido-item__cabecera">
+        <div>
+          <div class="pedido-item__num">Pedido #${p.id_pedido}</div>
+          <div class="pedido-item__fecha">${fecha(p.creado_en)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div style="font-size:1.25rem;font-weight:800">${fmt(p.total)}</div>
+          <button class="btn btn-tenue btn-sm btn-ver-ped" data-id="${p.id_pedido}"
+            aria-label="Ver detalle del pedido #${p.id_pedido}">Ver detalle</button>
+        </div>
+      </div>
+      <div class="pedido-item__cuerpo">
+        ${p.estado !== 'cancelado' ? `<div class="timeline" role="list" aria-label="Progreso del pedido">${timeline}</div>` :
+          `<div class="alerta alerta--error" style="margin-bottom:0">
+            <span class="alerta__icono">❌</span>
+            <div class="alerta__cuerpo"><strong>Pedido cancelado</strong></div>
+          </div>`}
+        ${p.notas ? `<div style="font-size:.8125rem;color:var(--texto-tenue);margin-top:.75rem">📝 ${esc(p.notas)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  lista.querySelectorAll('.btn-ver-ped').forEach(b =>
+    b.addEventListener('click', () => verDetalle(parseInt(b.dataset.id))));
+}
+
+async function verDetalle(id) {
+  const res = await API.get('/php/modules/pedidos.php', { accion: 'detalle', id });
+  if (!res.exito) { Toast.mostrar('error','Error', res.mensaje); return; }
+  const { pedido, items } = res.datos;
+
+  document.getElementById('titulo-detalle-ped').textContent = `Pedido #${pedido.id_pedido}`;
+  document.getElementById('cuerpo-detalle-ped').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
+      <span class="badge badge--${pedido.estado}" style="font-size:.875rem;padding:.375rem .875rem">${capitalizar(pedido.estado)}</span>
+      <div style="font-size:1.5rem;font-weight:800;color:var(--color-primario)">${fmt(pedido.total)}</div>
+    </div>
+    <div style="border:1px solid var(--borde);border-radius:.75rem;overflow:hidden;margin-bottom:1rem">
+      ${items.map((it,i) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;
+           padding:.875rem 1.125rem;${i<items.length-1?'border-bottom:1px solid var(--borde)':''}">
+        <div>
+          <div style="font-weight:600">${esc(it.producto_nombre)}</div>
+          <div style="font-size:.8125rem;color:var(--texto-tenue)">${it.cantidad} × ${fmt(it.precio_unidad)}</div>
+        </div>
+        <div style="font-weight:700">${fmt(it.subtotal)}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:.75rem 1.125rem;
+         background:var(--bg-pagina);border-radius:.75rem;font-weight:700">
+      <span>Total</span>
+      <span style="color:var(--color-primario)">${fmt(pedido.total)}</span>
+    </div>
+    <div style="margin-top:.75rem;font-size:.8125rem;color:var(--texto-tenue)">
+      Realizado el ${fecha(pedido.creado_en)}
+    </div>`;
+
+  Modal.abrir('modal-detalle-ped');
+}
+
+function renderizarPaginacion(total, totalPags) {
+  const info    = document.querySelector('#paginacion-mispeds .paginacion__info');
+  const botones = document.querySelector('#paginacion-mispeds .paginacion__botones');
+  const ini = (estado.pagina - 1) * estado.limite + 1;
+  const fin = Math.min(estado.pagina * estado.limite, total);
+  info.textContent = total ? `Mostrando ${ini}–${fin} de ${total}` : 'Sin pedidos';
+
+  let html = `<button class="paginacion__btn" data-p="${estado.pagina-1}" ${estado.pagina<=1?'disabled':''}>‹</button>`;
+  for (let p = Math.max(1,estado.pagina-2); p<=Math.min(totalPags,estado.pagina+2); p++) {
+    html += `<button class="paginacion__btn ${p===estado.pagina?'paginacion__btn--activo':''}" data-p="${p}">${p}</button>`;
+  }
+  html += `<button class="paginacion__btn" data-p="${estado.pagina+1}" ${estado.pagina>=totalPags?'disabled':''}>›</button>`;
+  botones.innerHTML = html;
+  botones.querySelectorAll('[data-p]').forEach(b =>
+    b.addEventListener('click', () => !b.disabled && cargarPedidos({ pagina: parseInt(b.dataset.p) })));
+}
+
+const esc         = (s) => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const capitalizar = (s) => String(s??'').charAt(0).toUpperCase() + String(s??'').slice(1);
+const fecha       = (s) => s ? new Date(s).toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+const fmt         = (v) => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP'}).format(v??0);
+</script>
+</body>
+</html>

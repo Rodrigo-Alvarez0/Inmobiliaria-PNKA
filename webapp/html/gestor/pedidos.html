@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+  <style>
+    .estado-tabs {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .estado-tab {
+      padding: .5rem 1.125rem; border-radius: 2rem;
+      border: 1.5px solid var(--borde); background: var(--bg-tarjeta);
+      font-size: .8125rem; font-weight: 600; cursor: pointer;
+      transition: var(--transicion); color: var(--texto-secundario);
+    }
+    .estado-tab:hover   { border-color: var(--color-primario); color: var(--color-primario); }
+    .estado-tab--activo { background: var(--color-primario); border-color: var(--color-primario); color: #fff; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+      <div class="sidebar__seccion" data-nivel-minimo="4"><div class="sidebar__seccion-titulo">Administración</div></div>
+      <a href="usuarios.html"   class="sidebar__enlace" data-nivel-minimo="4"><span class="sidebar__enlace-icono">👥</span> Usuarios</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Catálogo</div></div>
+      <a href="productos.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📦</span> Productos</a>
+      <a href="categorias.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">🏷️</span> Categorías</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Ventas</div></div>
+      <a href="pedidos.html"    class="sidebar__enlace sidebar__enlace--activo" aria-current="page"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Pedidos</h1>
+    </div>
+    <div class="header__acciones">
+      <span id="badge-rol" class="badge"></span>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Filtros por estado -->
+    <div class="estado-tabs" role="group" aria-label="Filtrar por estado">
+      <button class="estado-tab estado-tab--activo" data-estado="">Todos</button>
+      <button class="estado-tab" data-estado="pendiente">⏳ Pendiente</button>
+      <button class="estado-tab" data-estado="confirmado">✅ Confirmado</button>
+      <button class="estado-tab" data-estado="enviado">📦 Enviado</button>
+      <button class="estado-tab" data-estado="entregado">🏠 Entregado</button>
+      <button class="estado-tab" data-estado="cancelado">❌ Cancelado</button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="tarjeta" style="overflow:hidden">
+      <div class="tabla-contenedor">
+        <table class="tabla" aria-label="Lista de pedidos" aria-live="polite">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col" data-nivel-minimo="3">Cliente</th>
+              <th scope="col">Total</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Fecha</th>
+              <th scope="col"><span class="sr-solo">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-pedidos">
+            <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--texto-tenue)">
+              <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="paginacion" id="paginacion-pedidos">
+        <div class="paginacion__info">—</div>
+        <div class="paginacion__botones" role="navigation" aria-label="Páginas"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal detalle de pedido -->
+<div id="modal-pedido" class="modal-overlay" role="dialog" aria-modal="true"
+     aria-labelledby="modal-pedido-titulo" hidden aria-hidden="true">
+  <div class="modal" style="max-width:560px">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="modal-pedido-titulo">Detalle del pedido</h2>
+      <button class="modal__cerrar" data-cerrar-modal="modal-pedido">✕</button>
+    </div>
+    <div class="modal__cuerpo" id="modal-pedido-cuerpo">—</div>
+    <div class="modal__pie" id="modal-pedido-pie">
+      <button class="btn btn-tenue" data-cerrar-modal="modal-pedido">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+const estado = { pagina: 1, limite: 20, estadoFiltro: '' };
+
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+  Sesion.aplicarPermisos();
+
+  document.getElementById('sidebar-nombre').textContent = `${Sesion.datos.nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-rol').textContent    = capitalizar(Sesion.nombreRol);
+  document.getElementById('sidebar-avatar').textContent = Sesion.nombre.charAt(0).toUpperCase();
+  const badge = document.getElementById('badge-rol');
+  badge.textContent = capitalizar(Sesion.nombreRol);
+  badge.className   = `badge badge--${Sesion.nombreRol}`;
+
+  await cargarPedidos();
+
+  // Tabs de estado
+  document.querySelectorAll('.estado-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.estado-tab').forEach(t => t.classList.remove('estado-tab--activo'));
+      tab.classList.add('estado-tab--activo');
+      cargarPedidos({ estadoFiltro: tab.dataset.estado, pagina: 1 });
+    });
+  });
+})();
+
+async function cargarPedidos(extra = {}) {
+  Object.assign(estado, extra);
+  const tbody = document.getElementById('tbody-pedidos');
+  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:var(--texto-tenue)">
+    <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…</td></tr>`;
+
+  const params = { pagina: estado.pagina, limite: estado.limite };
+  if (estado.estadoFiltro) params.estado = estado.estadoFiltro;
+
+  const res  = await API.get('/php/modules/pedidos.php', params);
+  const data = res.datos ?? {};
+  renderizarPedidos(data.pedidos ?? []);
+  renderizarPaginacion(data.total ?? 0, data.total_paginas ?? 0);
+}
+
+function renderizarPedidos(pedidos) {
+  const tbody       = document.getElementById('tbody-pedidos');
+  const esGestor    = Sesion.tieneNivel(3);
+
+  if (!pedidos.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="estado-vacio">
+      <div class="estado-vacio__icono">🛒</div>
+      <div class="estado-vacio__titulo">Sin pedidos</div>
+      <div class="estado-vacio__desc">No hay pedidos que coincidan con el filtro seleccionado.</div>
+    </div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = pedidos.map(p => `
+  <tr>
+    <td data-etiqueta="#" style="font-weight:700;color:var(--color-primario)">#${p.id_pedido}</td>
+    ${esGestor ? `<td data-etiqueta="Cliente">
+      <div style="font-weight:600">${esc(p.cliente_nombre)}</div>
+      <div style="font-size:.8125rem;color:var(--texto-tenue)">${esc(p.cliente_correo)}</div>
+    </td>` : ''}
+    <td data-etiqueta="Total" style="font-weight:700">${formatearPrecio(p.total)}</td>
+    <td data-etiqueta="Estado"><span class="badge badge--${p.estado}">${capitalizar(p.estado)}</span></td>
+    <td data-etiqueta="Fecha" style="color:var(--texto-secundario);font-size:.8125rem">${fecha(p.creado_en)}</td>
+    <td>
+      <div style="display:flex;gap:.375rem;justify-content:flex-end">
+        <button class="btn btn-tenue btn-sm btn-ver" data-id="${p.id_pedido}"
+          aria-label="Ver pedido #${p.id_pedido}">👁 Ver</button>
+        ${esGestor && p.estado !== 'entregado' && p.estado !== 'cancelado' ? `
+        <button class="btn btn-primario btn-sm btn-cambiar-estado" data-id="${p.id_pedido}" data-estado="${p.estado}"
+          aria-label="Cambiar estado de pedido #${p.id_pedido}">✏️ Estado</button>` : ''}
+      </div>
+    </td>
+  </tr>`).join('');
+
+  tbody.querySelectorAll('.btn-ver').forEach(b =>
+    b.addEventListener('click', () => verDetalle(parseInt(b.dataset.id))));
+  tbody.querySelectorAll('.btn-cambiar-estado').forEach(b =>
+    b.addEventListener('click', () => cambiarEstado(parseInt(b.dataset.id), b.dataset.estado)));
+}
+
+async function verDetalle(id) {
+  const res = await API.get('/php/modules/pedidos.php', { accion: 'detalle', id });
+  if (!res.exito) { Toast.mostrar('error','Error', res.mensaje); return; }
+  const { pedido, items } = res.datos;
+
+  document.getElementById('modal-pedido-titulo').textContent = `Pedido #${pedido.id_pedido}`;
+  document.getElementById('modal-pedido-cuerpo').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+      <div><div style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Cliente</div>
+           <div style="font-weight:600">${esc(pedido.cliente_nombre)}</div></div>
+      <div><div style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Estado</div>
+           <span class="badge badge--${pedido.estado}">${capitalizar(pedido.estado)}</span></div>
+      <div><div style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Fecha</div>
+           <div>${fecha(pedido.creado_en)}</div></div>
+      <div><div style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Total</div>
+           <div style="font-size:1.25rem;font-weight:800;color:var(--color-primario)">${formatearPrecio(pedido.total)}</div></div>
+    </div>
+    <div style="border-top:1px solid var(--borde);padding-top:1rem">
+      <div style="font-size:.8125rem;font-weight:700;text-transform:uppercase;color:var(--texto-tenue);margin-bottom:.75rem">Productos</div>
+      ${items.map(i => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.625rem 0;border-bottom:1px solid var(--borde)">
+        <div>
+          <div style="font-weight:600">${esc(i.producto_nombre)}</div>
+          <div style="font-size:.8125rem;color:var(--texto-tenue)">${i.cantidad} × ${formatearPrecio(i.precio_unidad)}</div>
+        </div>
+        <div style="font-weight:700">${formatearPrecio(i.subtotal)}</div>
+      </div>`).join('')}
+    </div>
+    ${pedido.notas ? `<div style="margin-top:1rem;padding:.75rem;background:var(--bg-pagina);border-radius:.5rem;font-size:.875rem;color:var(--texto-secundario)">
+      <strong>Notas:</strong> ${esc(pedido.notas)}</div>` : ''}`;
+
+  Modal.abrir('modal-pedido');
+}
+
+async function cambiarEstado(id, estadoActual) {
+  const siguientes = { pendiente:'confirmado', confirmado:'enviado', enviado:'entregado' };
+  const siguiente  = siguientes[estadoActual];
+  if (!siguiente) return;
+
+  const ok = await Modal.confirmar({
+    titulo:  'Cambiar estado',
+    mensaje: `¿Cambiar el pedido #${id} a "<strong>${capitalizar(siguiente)}</strong>"?`,
+    textoConfirmar: 'Confirmar',
+    tipo: 'primario',
+  });
+  if (!ok) return;
+
+  const csrf = await API.obtenerCSRF('pedidos');
+  const res  = await API.put('/php/modules/pedidos.php', { id_pedido: id, estado: siguiente, csrf_token: csrf });
+  if (res.exito) {
+    Toast.mostrar('exito','Estado actualizado', res.mensaje);
+    cargarPedidos();
+  } else {
+    Toast.mostrar('error','Error', res.mensaje);
+  }
+}
+
+function renderizarPaginacion(total, totalPags) {
+  const info    = document.querySelector('#paginacion-pedidos .paginacion__info');
+  const botones = document.querySelector('#paginacion-pedidos .paginacion__botones');
+  const ini = (estado.pagina - 1) * estado.limite + 1;
+  const fin = Math.min(estado.pagina * estado.limite, total);
+  info.textContent = total ? `Mostrando ${ini}–${fin} de ${total} pedidos` : 'Sin resultados';
+
+  let html = `<button class="paginacion__btn" data-p="${estado.pagina-1}" ${estado.pagina<=1?'disabled':''}>‹</button>`;
+  for (let p = Math.max(1,estado.pagina-2); p<=Math.min(totalPags,estado.pagina+2); p++) {
+    html += `<button class="paginacion__btn ${p===estado.pagina?'paginacion__btn--activo':''}" data-p="${p}">${p}</button>`;
+  }
+  html += `<button class="paginacion__btn" data-p="${estado.pagina+1}" ${estado.pagina>=totalPags?'disabled':''}>›</button>`;
+  botones.innerHTML = html;
+  botones.querySelectorAll('[data-p]').forEach(b =>
+    b.addEventListener('click', () => !b.disabled && cargarPedidos({ pagina: parseInt(b.dataset.p) })));
+}
+
+const esc = (s) => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const capitalizar = (s) => String(s??'').charAt(0).toUpperCase() + String(s??'').slice(1);
+const fecha = (s) => s ? new Date(s).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+const formatearPrecio = (v) => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP'}).format(v??0);
+</script>
+</body>
+</html>

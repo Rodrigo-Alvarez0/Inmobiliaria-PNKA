@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de administración — PNK_inmovilarias">
+  <title>Panel Admin — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+</head>
+<body>
+
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- ════════════════════════════════════════════════
+     LAYOUT PRINCIPAL
+     ════════════════════════════════════════════════ -->
+<div class="app-layout">
+
+  <!-- ─── SIDEBAR ─────────────────────────────────────────────────────── -->
+  <aside class="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo" aria-label="PNK_inmovilarias — Ir al inicio">
+      <div class="sidebar__logo-icono" aria-hidden="true">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+
+    <nav class="sidebar__nav" aria-label="Menú de navegación">
+
+      <!-- General -->
+      <div class="sidebar__seccion">
+        <div class="sidebar__seccion-titulo" aria-hidden="true">General</div>
+      </div>
+      <a href="dashboard.html"      class="sidebar__enlace sidebar__enlace--activo" aria-current="page">
+        <span class="sidebar__enlace-icono" aria-hidden="true">📊</span> Resumen
+      </a>
+
+      <!-- Administración (nivel 5) -->
+      <div class="sidebar__seccion" data-nivel-minimo="4">
+        <div class="sidebar__seccion-titulo" aria-hidden="true">Administración</div>
+      </div>
+      <a href="usuarios.html" class="sidebar__enlace" data-nivel-minimo="4">
+        <span class="sidebar__enlace-icono" aria-hidden="true">👥</span> Usuarios
+      </a>
+      <a href="roles.html" class="sidebar__enlace" data-nivel-minimo="5">
+        <span class="sidebar__enlace-icono" aria-hidden="true">🔑</span> Roles y permisos
+      </a>
+      <a href="bitacora.html" class="sidebar__enlace" data-nivel-minimo="5">
+        <span class="sidebar__enlace-icono" aria-hidden="true">📋</span> Bitácora
+      </a>
+
+      <!-- Catálogo -->
+      <div class="sidebar__seccion" data-nivel-minimo="3">
+        <div class="sidebar__seccion-titulo" aria-hidden="true">Catálogo</div>
+      </div>
+      <a href="productos.html" class="sidebar__enlace" data-nivel-minimo="3">
+        <span class="sidebar__enlace-icono" aria-hidden="true">📦</span> Productos
+      </a>
+      <a href="categorias.html" class="sidebar__enlace" data-nivel-minimo="3">
+        <span class="sidebar__enlace-icono" aria-hidden="true">🏷️</span> Categorías
+      </a>
+
+      <!-- Ventas -->
+      <div class="sidebar__seccion" data-nivel-minimo="3">
+        <div class="sidebar__seccion-titulo" aria-hidden="true">Ventas</div>
+      </div>
+      <a href="pedidos.html" class="sidebar__enlace" data-nivel-minimo="3">
+        <span class="sidebar__enlace-icono" aria-hidden="true">🛒</span> Pedidos
+      </a>
+
+      <!-- Separador -->
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html" class="sidebar__enlace">
+        <span class="sidebar__enlace-icono" aria-hidden="true">⚙️</span> Mi perfil
+      </a>
+    </nav>
+
+    <!-- Info del usuario en sesión -->
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar" aria-hidden="true">A</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── HEADER ───────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button
+        class="btn btn-tenue btn-sm btn-menu-movil"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="sidebar"
+      >☰</button>
+      <h1 class="header__titulo" id="titulo-pagina">Resumen del sistema</h1>
+    </div>
+    <div class="header__acciones">
+      <span id="badge-rol" class="badge" aria-label="Rol actual"></span>
+      <button
+        class="btn btn-tenue btn-sm"
+        data-accion-cerrar-sesion
+        aria-label="Cerrar sesión"
+      >🚪 Salir</button>
+    </div>
+  </header>
+
+  <!-- ─── CONTENIDO PRINCIPAL ──────────────────────────────────────────── -->
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- KPIs -->
+    <section aria-labelledby="titulo-kpis">
+      <h2 id="titulo-kpis" class="sr-solo">Indicadores clave</h2>
+      <div class="grid-kpi" id="grid-kpis">
+        <!-- Se carga dinámicamente -->
+        <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+        <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+        <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+        <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+      </div>
+    </section>
+
+    <!-- Usuarios y Productos recientes -->
+    <div class="grid-2" style="gap:1.5rem;margin-top:0">
+
+      <!-- Últimos usuarios -->
+      <section aria-labelledby="titulo-ultimos-usuarios" data-nivel-minimo="4">
+        <div class="tarjeta">
+          <div class="tarjeta__cabecera">
+            <h2 class="tarjeta__titulo" id="titulo-ultimos-usuarios">Usuarios recientes</h2>
+            <a href="usuarios.html" class="btn btn-tenue btn-sm">Ver todos</a>
+          </div>
+          <div class="tabla-contenedor" style="border:none;border-radius:0">
+            <table class="tabla" aria-label="Usuarios recientes">
+              <thead>
+                <tr>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Rol</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Registro</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-usuarios-recientes">
+                <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--texto-tenue)">
+                  <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Últimos pedidos -->
+      <section aria-labelledby="titulo-ultimos-pedidos" data-nivel-minimo="3">
+        <div class="tarjeta">
+          <div class="tarjeta__cabecera">
+            <h2 class="tarjeta__titulo" id="titulo-ultimos-pedidos">Pedidos recientes</h2>
+            <a href="pedidos.html" class="btn btn-tenue btn-sm">Ver todos</a>
+          </div>
+          <div class="tabla-contenedor" style="border:none;border-radius:0">
+            <table class="tabla" aria-label="Pedidos recientes">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-pedidos-recientes">
+                <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--texto-tenue)">
+                  <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Panel solo admin: distribución de roles -->
+    <section aria-labelledby="titulo-distribucion" data-nivel-minimo="5" style="margin-top:1.5rem">
+      <div class="tarjeta">
+        <div class="tarjeta__cabecera">
+          <h2 class="tarjeta__titulo" id="titulo-distribucion">Distribución de roles</h2>
+        </div>
+        <div class="tarjeta__cuerpo">
+          <div id="distribucion-roles" style="display:flex;flex-wrap:wrap;gap:1rem">
+            <div class="spinner spinner--primario"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /main -->
+</div><!-- /app-layout -->
+
+<!-- ─── Scripts ───────────────────────────────────────────────────────────── -->
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+// ─── Iniciar sesión y cargar datos ────────────────────────────────────────────
+(async () => {
+  await Sesion.cargar();
+
+  if (!Sesion.estaAutenticado) {
+    window.location.href = '/html/login.html';
+    return;
+  }
+
+  // Aplicar permisos de visibilidad
+  Sesion.aplicarPermisos();
+
+  // Datos en sidebar
+  document.getElementById('sidebar-nombre').textContent = `${Sesion.datos.nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-rol').textContent    = Sesion.nombreRol.charAt(0).toUpperCase() + Sesion.nombreRol.slice(1);
+  document.getElementById('sidebar-avatar').textContent = Sesion.nombre.charAt(0).toUpperCase();
+
+  const badgeRol = document.getElementById('badge-rol');
+  badgeRol.textContent  = Sesion.nombreRol.charAt(0).toUpperCase() + Sesion.nombreRol.slice(1);
+  badgeRol.className    = `badge badge--${Sesion.nombreRol}`;
+
+  // Cargar estadísticas (solo admin/propietario)
+  if (Sesion.tieneNivel(4)) {
+    await cargarEstadisticas();
+    await cargarUsuariosRecientes();
+  }
+  await cargarPedidosRecientes();
+})();
+
+// ─── Estadísticas ─────────────────────────────────────────────────────────────
+async function cargarEstadisticas() {
+  const datos = await API.get('/php/modules/usuarios.php', { accion: 'estadisticas' });
+  const stats = datos.datos?.estadisticas ?? {};
+
+  const colorIcono = [
+    { bg: '#dbeafe', color: '#1d4ed8', icono: '👥' },
+    { bg: '#dcfce7', color: '#16a34a', icono: '📦' },
+    { bg: '#fef9c3', color: '#854d0e', icono: '🛒' },
+    { bg: '#ede9fe', color: '#6d28d9', icono: '📅' },
+  ];
+
+  const kpis = [
+    { etiqueta: 'Usuarios activos',   valor: stats.activos          ?? 0, extra: `+${stats.registros_mes ?? 0} este mes` },
+    { etiqueta: 'Productos activos',  valor: stats.total_productos  ?? 0, extra: '' },
+    { etiqueta: 'Pedidos totales',    valor: stats.total_pedidos    ?? 0, extra: '' },
+    { etiqueta: 'Inactivos',          valor: stats.inactivos        ?? 0, extra: '' },
+  ];
+
+  document.getElementById('grid-kpis').innerHTML = kpis.map((k, i) => `
+    <div class="kpi">
+      <div class="kpi__icono" style="background:${colorIcono[i].bg};color:${colorIcono[i].color}"
+           aria-hidden="true">${colorIcono[i].icono}</div>
+      <div>
+        <div class="kpi__valor">${k.valor.toLocaleString('es-CL')}</div>
+        <div class="kpi__etiqueta">${k.etiqueta}</div>
+        ${k.extra ? `<div class="kpi__cambio kpi__cambio--alza">${k.extra}</div>` : ''}
+      </div>
+    </div>`).join('');
+
+  // Distribución de roles
+  if (stats.por_rol?.length) {
+    document.getElementById('distribucion-roles').innerHTML = stats.por_rol.map(r => `
+      <div style="flex:1;min-width:120px;padding:1rem;background:var(--bg-pagina);border-radius:var(--radio);text-align:center">
+        <div style="font-size:1.75rem;font-weight:800">${r.total}</div>
+        <div class="badge badge--${r.rol}" style="margin:.5rem auto 0">${r.rol.charAt(0).toUpperCase()+r.rol.slice(1)}</div>
+      </div>`).join('');
+  }
+}
+
+// ─── Usuarios recientes ────────────────────────────────────────────────────────
+async function cargarUsuariosRecientes() {
+  const datos = await API.get('/php/modules/usuarios.php', { limite: 5, pagina: 1 });
+  const usuarios = datos.datos?.usuarios ?? [];
+  const tbody = document.getElementById('tbody-usuarios-recientes');
+
+  if (!usuarios.length) {
+    tbody.innerHTML = '<tr><td colspan="4"><div class="estado-vacio"><div class="estado-vacio__icono">👥</div><div class="estado-vacio__titulo">Sin usuarios</div></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = usuarios.map(u => `
+    <tr>
+      <td data-etiqueta="Nombre" style="font-weight:600">${escapar(u.nombre)} ${escapar(u.apellido)}</td>
+      <td data-etiqueta="Rol"><span class="badge badge--${u.nombre_rol}">${u.nombre_rol}</span></td>
+      <td data-etiqueta="Estado"><span class="badge ${u.activo ? 'badge--activo' : 'badge--inactivo'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
+      <td data-etiqueta="Registro" style="color:var(--texto-secundario);font-size:.8125rem">${formatearFecha(u.creado_en)}</td>
+    </tr>`).join('');
+}
+
+// ─── Pedidos recientes ─────────────────────────────────────────────────────────
+async function cargarPedidosRecientes() {
+  // Simulado porque módulo pedidos es independiente
+  const tbody = document.getElementById('tbody-pedidos-recientes');
+  tbody.innerHTML = `<tr><td colspan="4">
+    <div class="estado-vacio">
+      <div class="estado-vacio__icono">🛒</div>
+      <div class="estado-vacio__titulo">Módulo activo</div>
+      <div class="estado-vacio__desc">Los pedidos se gestionan desde el módulo de ventas.</div>
+      <a href="pedidos.html" class="btn btn-primario btn-sm">Ir a pedidos</a>
+    </div>
+  </td></tr>`;
+}
+
+// ─── Utilidades ───────────────────────────────────────────────────────────────
+function escapar(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function formatearFecha(str) {
+  if (!str) return '—';
+  return new Date(str).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gestión de usuarios — PNK_inmovilarias">
+  <title>Usuarios — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+</head>
+<body>
+
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+
+  <!-- ─── SIDEBAR (compartido) ─────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono" aria-hidden="true">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+      <div class="sidebar__seccion" data-nivel-minimo="4"><div class="sidebar__seccion-titulo">Administración</div></div>
+      <a href="usuarios.html"   class="sidebar__enlace sidebar__enlace--activo" aria-current="page" data-nivel-minimo="4"><span class="sidebar__enlace-icono">👥</span> Usuarios</a>
+      <a href="roles.html"      class="sidebar__enlace" data-nivel-minimo="5"><span class="sidebar__enlace-icono">🔑</span> Roles</a>
+      <a href="bitacora.html"   class="sidebar__enlace" data-nivel-minimo="5"><span class="sidebar__enlace-icono">📋</span> Bitácora</a>
+      <div class="sidebar__seccion" data-nivel-minimo="3"><div class="sidebar__seccion-titulo">Catálogo</div></div>
+      <a href="productos.html"  class="sidebar__enlace" data-nivel-minimo="3"><span class="sidebar__enlace-icono">📦</span> Productos</a>
+      <a href="categorias.html" class="sidebar__enlace" data-nivel-minimo="3"><span class="sidebar__enlace-icono">🏷️</span> Categorías</a>
+      <div class="sidebar__seccion" data-nivel-minimo="3"><div class="sidebar__seccion-titulo">Ventas</div></div>
+      <a href="pedidos.html"    class="sidebar__enlace" data-nivel-minimo="3"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">A</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── HEADER ───────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <h1 class="header__titulo">Gestión de usuarios</h1>
+    </div>
+    <div class="header__acciones">
+      <span id="badge-rol" class="badge"></span>
+      <button class="btn btn-primario btn-sm" id="btn-nuevo-usuario" data-nivel-minimo="5" aria-label="Crear nuevo usuario">
+        + Nuevo usuario
+      </button>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <!-- ─── CONTENIDO ────────────────────────────────────────────────────── -->
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Barra de herramientas -->
+    <div class="barra-herramientas" role="search" aria-label="Filtros de usuarios">
+      <div class="busqueda" style="flex:2;min-width:220px">
+        <span class="busqueda__icono" aria-hidden="true">🔍</span>
+        <input type="search" id="input-buscar" class="busqueda__campo"
+          placeholder="Buscar por nombre, apellido o correo…"
+          aria-label="Buscar usuarios" autocomplete="off">
+      </div>
+      <select id="filtro-rol" class="campo__control" style="width:auto;min-width:160px" aria-label="Filtrar por rol">
+        <option value="">Todos los roles</option>
+        <option value="1">Invitado</option>
+        <option value="2">Usuario</option>
+        <option value="3">Gestor</option>
+        <option value="4">Propietario</option>
+        <option value="5">Admin</option>
+      </select>
+      <select id="filtro-limite" class="campo__control" style="width:auto" aria-label="Registros por página">
+        <option value="10">10 / página</option>
+        <option value="20" selected>20 / página</option>
+        <option value="50">50 / página</option>
+      </select>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="tarjeta" style="overflow:hidden">
+      <div class="tabla-contenedor" id="contenedor-tabla">
+        <table class="tabla" id="tabla-usuarios" aria-label="Lista de usuarios" aria-live="polite">
+          <thead>
+            <tr>
+              <th scope="col" data-col="id_usuario">ID <span class="orden-icono" aria-hidden="true">⇅</span></th>
+              <th scope="col" data-col="nombre">Nombre <span class="orden-icono" aria-hidden="true">⇅</span></th>
+              <th scope="col">Correo</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Estado</th>
+              <th scope="col" data-col="creado_en">Registro <span class="orden-icono" aria-hidden="true">⇅</span></th>
+              <th scope="col" data-col="ultimo_acceso">Último acceso</th>
+              <th scope="col"><span class="sr-solo">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-usuarios">
+            <tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--texto-tenue)">
+              <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando usuarios…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Paginación -->
+      <div class="paginacion" id="paginacion-tabla-usuarios">
+        <div class="paginacion__info">—</div>
+        <div class="paginacion__botones" role="navigation" aria-label="Paginación"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     MODAL: Crear / Editar Usuario
+     ════════════════════════════════════════════════ -->
+<div id="modal-usuario" class="modal-overlay" role="dialog" aria-modal="true"
+     aria-labelledby="modal-usuario-titulo" hidden aria-hidden="true">
+  <div class="modal">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="modal-usuario-titulo">Nuevo usuario</h2>
+      <button class="modal__cerrar" data-cerrar-modal="modal-usuario" aria-label="Cerrar modal">✕</button>
+    </div>
+    <div class="modal__cuerpo">
+      <form id="form-usuario" novalidate autocomplete="off">
+        <input type="hidden" id="campo-id-usuario" name="id_usuario" value="0">
+
+        <div class="grid-2" style="gap:1rem">
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="campo-nombre">Nombre <span class="requerido">*</span></label>
+            <input type="text" id="campo-nombre" name="nombre" class="campo__control"
+              data-validar="requerido|minLong:2|maxLong:100"
+              aria-describedby="msg-nombre" placeholder="Juan" required>
+            <span id="msg-nombre" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="campo-apellido">Apellido <span class="requerido">*</span></label>
+            <input type="text" id="campo-apellido" name="apellido" class="campo__control"
+              data-validar="requerido|minLong:2|maxLong:100"
+              aria-describedby="msg-apellido" placeholder="Pérez" required>
+            <span id="msg-apellido" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="grupo-campo">
+          <label class="campo__etiqueta" for="campo-correo">Correo <span class="requerido">*</span></label>
+          <input type="email" id="campo-correo" name="correo" class="campo__control"
+            data-validar="requerido|correo" inputmode="email"
+            aria-describedby="msg-correo" placeholder="usuario@ejemplo.com" required>
+          <span id="msg-correo" class="campo__mensaje" aria-live="polite"></span>
+        </div>
+
+        <div class="grupo-campo" id="grupo-contrasena">
+          <label class="campo__etiqueta" for="campo-contrasena">
+            Contraseña <span class="requerido" id="asterisco-contra">*</span>
+          </label>
+          <input type="password" id="campo-contrasena" name="contrasena" class="campo__control"
+            data-validar="requerido|contrasena"
+            data-fuerza-contrasena="fuerza-modal"
+            aria-describedby="msg-contra fuerza-modal" placeholder="Mínimo 8 caracteres" required>
+          <span id="msg-contra" class="campo__mensaje" aria-live="polite"></span>
+          <div id="fuerza-modal" class="fuerza-contrasena">
+            <div class="fuerza-contrasena__barra"><div class="fuerza-contrasena__progreso"></div></div>
+            <div class="fuerza-contrasena__texto"></div>
+          </div>
+          <span class="campo__mensaje campo__mensaje--ayuda" style="display:block">Al editar, deje vacío para no cambiarla.</span>
+        </div>
+
+        <div class="grupo-campo" data-nivel-minimo="5">
+          <label class="campo__etiqueta" for="campo-rol">Rol</label>
+          <select id="campo-rol" name="id_rol" class="campo__control" aria-describedby="msg-rol">
+            <option value="1">Invitado</option>
+            <option value="2" selected>Usuario</option>
+            <option value="3">Gestor</option>
+            <option value="4">Propietario</option>
+            <option value="5">Admin</option>
+          </select>
+          <span id="msg-rol" class="campo__mensaje" aria-live="polite"></span>
+        </div>
+
+        <div class="grupo-campo" id="grupo-activo" style="display:none">
+          <label class="campo__etiqueta" for="campo-activo">Estado</label>
+          <select id="campo-activo" name="activo" class="campo__control">
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal__pie">
+      <button class="btn btn-tenue" data-cerrar-modal="modal-usuario">Cancelar</button>
+      <button class="btn btn-primario" id="btn-guardar-usuario">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+// ─── Estado ────────────────────────────────────────────────────────────────────
+const estado = { pagina: 1, limite: 20, buscar: '', id_rol: '', modoEdicion: false };
+let timeoutBusqueda = null;
+
+// ─── Inicio ────────────────────────────────────────────────────────────────────
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+  if (!Sesion.tieneNivel(4))   { window.location.href = '/html/sin_permisos.html'; return; }
+
+  Sesion.aplicarPermisos();
+  document.getElementById('sidebar-nombre').textContent = `${Sesion.datos.nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-rol').textContent    = capitalizar(Sesion.nombreRol);
+  document.getElementById('sidebar-avatar').textContent = Sesion.nombre.charAt(0).toUpperCase();
+  const badge = document.getElementById('badge-rol');
+  badge.textContent = capitalizar(Sesion.nombreRol);
+  badge.className   = `badge badge--${Sesion.nombreRol}`;
+
+  await cargarUsuarios();
+  enlazarEventos();
+})();
+
+// ─── Cargar tabla ──────────────────────────────────────────────────────────────
+async function cargarUsuarios(extra = {}) {
+  Object.assign(estado, extra);
+  const tbody = document.getElementById('tbody-usuarios');
+  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2.5rem;color:var(--texto-tenue)">
+    <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…</td></tr>`;
+
+  const params = { accion: 'listar', pagina: estado.pagina, limite: estado.limite };
+  if (estado.buscar) params.buscar  = estado.buscar;
+  if (estado.id_rol) params.id_rol  = estado.id_rol;
+
+  const res  = await API.get('/php/modules/usuarios.php', params);
+  const data = res.datos ?? {};
+
+  renderizarFilas(data.usuarios ?? []);
+  renderizarPaginacion(data.total ?? 0, data.total_paginas ?? 0);
+}
+
+function renderizarFilas(usuarios) {
+  const tbody = document.getElementById('tbody-usuarios');
+  if (!usuarios.length) {
+    tbody.innerHTML = `<tr><td colspan="8">
+      <div class="estado-vacio">
+        <div class="estado-vacio__icono">👥</div>
+        <div class="estado-vacio__titulo">Sin resultados</div>
+        <div class="estado-vacio__desc">No se encontraron usuarios con los filtros actuales.</div>
+      </div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = usuarios.map(u => {
+    const puedeEditar   = Sesion.tieneNivel(4);
+    const puedeEliminar = Sesion.tieneNivel(5) && u.id_usuario !== Sesion.idUsuario;
+    return `
+    <tr data-id="${u.id_usuario}">
+      <td data-etiqueta="ID" style="color:var(--texto-tenue);font-size:.8125rem">#${u.id_usuario}</td>
+      <td data-etiqueta="Nombre" style="font-weight:600">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:32px;height:32px;background:var(--color-primario);border-radius:50%;
+               display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;
+               font-weight:700;flex-shrink:0" aria-hidden="true">
+            ${esc(u.nombre).charAt(0).toUpperCase()}
+          </div>
+          ${esc(u.nombre)} ${esc(u.apellido)}
+        </div>
+      </td>
+      <td data-etiqueta="Correo" style="color:var(--texto-secundario);font-size:.8125rem">${esc(u.correo)}</td>
+      <td data-etiqueta="Rol"><span class="badge badge--${u.nombre_rol}">${capitalizar(u.nombre_rol)}</span></td>
+      <td data-etiqueta="Estado">
+        <span class="badge ${u.activo ? 'badge--activo' : 'badge--inactivo'}">
+          ${u.activo ? '● Activo' : '● Inactivo'}
+        </span>
+      </td>
+      <td data-etiqueta="Registro" style="color:var(--texto-secundario);font-size:.8125rem">${fecha(u.creado_en)}</td>
+      <td data-etiqueta="Último acceso" style="color:var(--texto-tenue);font-size:.8125rem">${fecha(u.ultimo_acceso)}</td>
+      <td data-etiqueta="Acciones">
+        <div style="display:flex;gap:.375rem;justify-content:flex-end">
+          ${puedeEditar ? `<button class="btn btn-tenue btn-sm btn-editar"
+            data-id="${u.id_usuario}" aria-label="Editar usuario ${esc(u.nombre)}">✏️</button>` : ''}
+          ${puedeEliminar ? `<button class="btn btn-peligro btn-sm btn-eliminar"
+            data-id="${u.id_usuario}" data-nombre="${esc(u.nombre)} ${esc(u.apellido)}"
+            aria-label="Eliminar usuario ${esc(u.nombre)}">🗑️</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Eventos de filas
+  tbody.querySelectorAll('.btn-editar').forEach(btn =>
+    btn.addEventListener('click', () => abrirModalEdicion(parseInt(btn.dataset.id))));
+  tbody.querySelectorAll('.btn-eliminar').forEach(btn =>
+    btn.addEventListener('click', () => confirmarEliminar(parseInt(btn.dataset.id), btn.dataset.nombre)));
+}
+
+function renderizarPaginacion(total, totalPags) {
+  const info    = document.querySelector('#paginacion-tabla-usuarios .paginacion__info');
+  const botones = document.querySelector('#paginacion-tabla-usuarios .paginacion__botones');
+  const ini = (estado.pagina - 1) * estado.limite + 1;
+  const fin = Math.min(estado.pagina * estado.limite, total);
+  info.textContent = total ? `Mostrando ${ini}–${fin} de ${total} usuarios` : 'Sin resultados';
+
+  let html = `<button class="paginacion__btn" data-p="${estado.pagina-1}" ${estado.pagina<=1?'disabled':''}>‹</button>`;
+  for (let p = Math.max(1, estado.pagina-2); p <= Math.min(totalPags, estado.pagina+2); p++) {
+    html += `<button class="paginacion__btn ${p===estado.pagina?'paginacion__btn--activo':''}" data-p="${p}">${p}</button>`;
+  }
+  html += `<button class="paginacion__btn" data-p="${estado.pagina+1}" ${estado.pagina>=totalPags?'disabled':''}>›</button>`;
+  botones.innerHTML = html;
+  botones.querySelectorAll('[data-p]').forEach(b =>
+    b.addEventListener('click', () => !b.disabled && cargarUsuarios({ pagina: parseInt(b.dataset.p) })));
+}
+
+// ─── Modal crear/editar ────────────────────────────────────────────────────────
+function abrirModalCrear() {
+  estado.modoEdicion = false;
+  const form = document.getElementById('form-usuario');
+  form.reset();
+  Validador.limpiar(form);
+  document.getElementById('campo-id-usuario').value = '0';
+  document.getElementById('modal-usuario-titulo').textContent = 'Nuevo usuario';
+  document.getElementById('grupo-activo').style.display = 'none';
+
+  // Contraseña obligatoria en creación
+  const contra = document.getElementById('campo-contrasena');
+  contra.dataset.validar = 'requerido|contrasena';
+  contra.required = true;
+
+  Modal.abrir('modal-usuario');
+}
+
+async function abrirModalEdicion(id) {
+  const res = await API.get('/php/modules/usuarios.php', { accion: 'detalle', id });
+  if (!res.exito) { Toast.mostrar('error', 'Error', res.mensaje); return; }
+  const u = res.datos.usuario;
+
+  estado.modoEdicion = true;
+  const form = document.getElementById('form-usuario');
+  Validador.limpiar(form);
+
+  document.getElementById('campo-id-usuario').value  = u.id_usuario;
+  document.getElementById('campo-nombre').value       = u.nombre;
+  document.getElementById('campo-apellido').value     = u.apellido;
+  document.getElementById('campo-correo').value       = u.correo;
+  document.getElementById('campo-contrasena').value   = '';
+  document.getElementById('campo-rol').value          = u.id_rol;
+  document.getElementById('campo-activo').value       = u.activo;
+  document.getElementById('modal-usuario-titulo').textContent = `Editar: ${u.nombre} ${u.apellido}`;
+  document.getElementById('grupo-activo').style.display = 'block';
+
+  // Contraseña opcional en edición
+  const contra = document.getElementById('campo-contrasena');
+  contra.dataset.validar = '';
+  contra.required = false;
+
+  Modal.abrir('modal-usuario');
+}
+
+async function guardarUsuario() {
+  const form = document.getElementById('form-usuario');
+  if (!Validador.validarFormulario(form)) return;
+
+  const datos    = Object.fromEntries(new FormData(form));
+  const esNuevo  = !estado.modoEdicion;
+  const csrf     = await API.obtenerCSRF(esNuevo ? 'crear_usuario' : 'editar_usuario');
+  datos.csrf_token = csrf;
+
+  const btn = document.getElementById('btn-guardar-usuario');
+  btn.disabled   = true;
+  btn.innerHTML  = '<span class="spinner"></span> Guardando…';
+
+  try {
+    const res = esNuevo
+      ? await API.post('/php/modules/usuarios.php', datos)
+      : await API.put('/php/modules/usuarios.php',  datos);
+
+    if (res.exito) {
+      Toast.mostrar('exito', 'Guardado', res.mensaje);
+      Modal.cerrar('modal-usuario');
+      cargarUsuarios();
+    } else {
+      if (res.datos?.errores) Validador.mostrarErroresServidor(form, res.datos.errores);
+      Toast.mostrar('error', 'Error', res.mensaje);
+    }
+  } finally {
+    btn.disabled  = false;
+    btn.innerHTML = 'Guardar';
+  }
+}
+
+async function confirmarEliminar(id, nombre) {
+  const ok = await Modal.confirmar({
+    titulo:          '¿Eliminar usuario?',
+    mensaje:         `¿Desea desactivar a <strong>${nombre}</strong>? Esta acción puede revertirse.`,
+    textoConfirmar:  'Eliminar',
+    textoCancelar:   'Cancelar',
+    tipo:            'peligro',
+  });
+  if (!ok) return;
+
+  const csrf = await API.obtenerCSRF('eliminar_usuario');
+  const res  = await API.delete('/php/modules/usuarios.php', { id_usuario: id, csrf_token: csrf });
+  if (res.exito) {
+    Toast.mostrar('exito', 'Eliminado', res.mensaje);
+    cargarUsuarios();
+  } else {
+    Toast.mostrar('error', 'Error', res.mensaje);
+  }
+}
+
+// ─── Eventos ───────────────────────────────────────────────────────────────────
+function enlazarEventos() {
+  // Nuevo usuario
+  document.getElementById('btn-nuevo-usuario')?.addEventListener('click', abrirModalCrear);
+
+  // Guardar
+  document.getElementById('btn-guardar-usuario').addEventListener('click', guardarUsuario);
+
+  // Búsqueda con debounce
+  document.getElementById('input-buscar').addEventListener('input', (e) => {
+    clearTimeout(timeoutBusqueda);
+    timeoutBusqueda = setTimeout(() => cargarUsuarios({ buscar: e.target.value, pagina: 1 }), 400);
+  });
+
+  // Filtro rol
+  document.getElementById('filtro-rol').addEventListener('change', (e) =>
+    cargarUsuarios({ id_rol: e.target.value, pagina: 1 }));
+
+  // Límite
+  document.getElementById('filtro-limite').addEventListener('change', (e) =>
+    cargarUsuarios({ limite: parseInt(e.target.value), pagina: 1 }));
+
+  // Ordenar columnas
+  document.querySelectorAll('.tabla thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      document.querySelectorAll('.tabla thead th').forEach(t => t.classList.remove('orden-activo'));
+      th.classList.add('orden-activo');
+      cargarUsuarios({ orden: col, pagina: 1 });
+    });
+  });
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+const esc = (str) => String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const capitalizar = (s) => String(s ?? '').charAt(0).toUpperCase() + String(s ?? '').slice(1);
+const fecha = (str) => str ? new Date(str).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+</script>
+</body>
+</html>

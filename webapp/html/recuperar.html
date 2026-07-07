@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar contraseña — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <style>
+    .recuperar-wrap {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0284c7 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+    .recuperar-panel {
+      background: #fff;
+      border-radius: 1.25rem;
+      box-shadow: 0 32px 64px rgba(0,0,0,.25);
+      width: 100%; max-width: 440px;
+      overflow: hidden;
+    }
+    .recuperar-deco {
+      background: linear-gradient(135deg,#1e3a8a,#0284c7);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+    }
+    .recuperar-icono {
+      width: 64px; height: 64px;
+      background: rgba(255,255,255,.15);
+      border-radius: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 1rem;
+      backdrop-filter: blur(8px);
+    }
+    .paso { display: none; }
+    .paso--activo { display: block; }
+    .linea-divisora {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.5rem 0; color: var(--texto-tenue); font-size: .8125rem;
+    }
+    .linea-divisora::before, .linea-divisora::after {
+      content:''; flex:1; height:1px; background: var(--borde);
+    }
+  </style>
+</head>
+<body>
+<main class="recuperar-wrap">
+  <div class="recuperar-panel">
+
+    <div class="recuperar-deco">
+      <div class="recuperar-icono" aria-hidden="true">🔐</div>
+      <h1 style="color:#fff;font-size:1.5rem;margin-bottom:.375rem">Recuperar acceso</h1>
+      <p style="color:rgba(255,255,255,.7);font-size:.875rem">Le enviaremos instrucciones a su correo</p>
+    </div>
+
+    <div style="padding:2rem">
+
+      <!-- Paso 1: ingresar correo -->
+      <div id="paso-1" class="paso paso--activo">
+        <form id="form-recuperar" novalidate>
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="rec-correo">
+              Correo electrónico <span class="requerido">*</span>
+            </label>
+            <input type="email" id="rec-correo" name="correo" class="campo__control"
+              data-validar="requerido|correo" inputmode="email"
+              placeholder="usuario@ejemplo.com"
+              aria-describedby="msg-rec-correo" required autofocus>
+            <span id="msg-rec-correo" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+          <button type="submit" class="btn btn-primario btn-bloque btn-lg" id="btn-recuperar">
+            Enviar instrucciones
+          </button>
+        </form>
+      </div>
+
+      <!-- Paso 2: confirmación -->
+      <div id="paso-2" class="paso" role="status" aria-live="polite">
+        <div style="text-align:center;padding:1.5rem 0">
+          <div style="font-size:3.5rem;margin-bottom:1.25rem">📬</div>
+          <h2 style="font-size:1.25rem;margin-bottom:.75rem">¡Revise su correo!</h2>
+          <p style="color:var(--texto-secundario);font-size:.9375rem;line-height:1.7">
+            Si el correo está registrado, recibirá un enlace para restablecer su contraseña en los próximos minutos.
+          </p>
+          <div style="margin:1.5rem 0;padding:1rem;background:var(--bg-pagina);border-radius:.75rem;font-size:.8125rem;color:var(--texto-tenue)">
+            Recuerde revisar la carpeta de correo no deseado.
+          </div>
+        </div>
+      </div>
+
+      <div class="linea-divisora">o bien</div>
+      <a href="login.html" class="btn btn-tenue btn-bloque" style="text-align:center">
+        ← Volver al inicio de sesión
+      </a>
+    </div>
+  </div>
+</main>
+
+<script src="../js/utilidades.js"></script>
+<script>
+'use strict';
+document.getElementById('form-recuperar').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await enviarFormulario(e.target, '/php/modules/autenticacion.php', 'recuperar', {
+    formularioCSRF: 'recuperar',
+    onExito() {
+      document.getElementById('paso-1').classList.remove('paso--activo');
+      document.getElementById('paso-2').classList.add('paso--activo');
+    },
+    onError(res) {
+      Toast.mostrar('error', 'Error', res.mensaje);
+    },
+  });
+});
+</script>
+</body>
+</html>

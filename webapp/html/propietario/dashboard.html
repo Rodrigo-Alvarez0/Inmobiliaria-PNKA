@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Propietario — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+  <style>
+    .hero-propietario {
+      background: linear-gradient(135deg,#78350f 0%,#b45309 50%,#d97706 100%);
+      border-radius:1.25rem; padding:2.25rem 2.5rem; margin-bottom:2rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
+      box-shadow: 0 8px 32px rgba(180,83,9,.35);
+    }
+    .hero-propietario h2 { color:#fff; font-size:1.625rem; margin-bottom:.375rem; }
+    .hero-propietario p  { color:rgba(255,255,255,.75); font-size:.9375rem; }
+    .kpi-grande {
+      background: var(--bg-tarjeta); border:1px solid var(--borde);
+      border-radius:1rem; padding:1.75rem;
+      box-shadow: var(--sombra-sm); transition:var(--transicion);
+    }
+    .kpi-grande:hover { box-shadow:var(--sombra-lg); transform:translateY(-2px); }
+    .kpi-grande__valor  { font-size:2.25rem; font-weight:800; line-height:1; }
+    .kpi-grande__label  { font-size:.875rem; color:var(--texto-secundario); margin-top:.375rem; }
+    .kpi-grande__barra  { height:4px; border-radius:2px; margin-top:1rem; background:var(--borde); overflow:hidden; }
+    .kpi-grande__progreso { height:100%; border-radius:2px; transition:width .6s ease; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html"  class="sidebar__enlace sidebar__enlace--activo" aria-current="page"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Gestión</div></div>
+      <a href="usuarios.html"   class="sidebar__enlace"><span class="sidebar__enlace-icono">👥</span> Usuarios</a>
+      <a href="productos.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📦</span> Productos</a>
+      <a href="categorias.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">🏷️</span> Categorías</a>
+      <a href="pedidos.html"    class="sidebar__enlace"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">P</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol">Propietario</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Panel del propietario</h1>
+    </div>
+    <div class="header__acciones">
+      <span class="badge badge--propietario">Propietario</span>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <div class="hero-propietario">
+      <div>
+        <h2 id="saludo-prop">Bienvenido</h2>
+        <p>Tiene acceso completo al sistema excepto configuración de roles.</p>
+      </div>
+      <div style="text-align:right">
+        <div style="color:rgba(255,255,255,.6);font-size:.8125rem;margin-bottom:.25rem">Hoy</div>
+        <div style="color:#fff;font-size:1.25rem;font-weight:700" id="fecha-hoy">—</div>
+      </div>
+    </div>
+
+    <!-- KPIs con barras de progreso -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.25rem;margin-bottom:2rem" id="grid-kpis">
+      <div class="kpi-grande"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+      <div class="kpi-grande"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+      <div class="kpi-grande"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+      <div class="kpi-grande"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+    </div>
+
+    <!-- Tabla pedidos pendientes -->
+    <section aria-labelledby="titulo-pendientes">
+      <div class="tarjeta">
+        <div class="tarjeta__cabecera">
+          <h2 class="tarjeta__titulo" id="titulo-pendientes">⏳ Pedidos pendientes de atención</h2>
+          <a href="pedidos.html?estado=pendiente" class="btn btn-tenue btn-sm">Ver todos</a>
+        </div>
+        <div class="tabla-contenedor" style="border:none;border-radius:0">
+          <table class="tabla" aria-label="Pedidos pendientes">
+            <thead>
+              <tr>
+                <th>#</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-pendientes">
+              <tr><td colspan="5" style="text-align:center;padding:2.5rem;color:var(--texto-tenue)">
+                <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+  if (!Sesion.tieneNivel(4))   { window.location.href = '/html/gestor/dashboard.html'; return; }
+
+  const nombre = Sesion.nombre;
+  document.getElementById('sidebar-nombre').textContent = `${nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-avatar').textContent = nombre.charAt(0).toUpperCase();
+
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+  document.getElementById('saludo-prop').textContent = `${saludo}, ${nombre}`;
+  document.getElementById('fecha-hoy').textContent =
+    new Date().toLocaleDateString('es-CL',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+
+  await Promise.all([cargarKPIs(), cargarPendientes()]);
+})();
+
+async function cargarKPIs() {
+  const res = await API.get('/php/modules/usuarios.php', { accion: 'estadisticas' });
+  const s   = res.datos?.estadisticas ?? {};
+
+  const defs = [
+    { icono:'👥', color:'#1d4ed8', bg:'#dbeafe', valor: s.activos??0,          max:s.activos??1,          label:'Usuarios activos' },
+    { icono:'📦', color:'#16a34a', bg:'#dcfce7', valor: s.total_productos??0,   max:s.total_productos??1,  label:'Productos activos' },
+    { icono:'🛒', color:'#d97706', bg:'#fef9c3', valor: s.total_pedidos??0,     max:s.total_pedidos??1,    label:'Pedidos totales' },
+    { icono:'📅', color:'#7c3aed', bg:'#ede9fe', valor: s.registros_mes??0,     max:Math.max(s.registros_mes??1,1), label:'Registros este mes' },
+  ];
+
+  document.getElementById('grid-kpis').innerHTML = defs.map((d,i) => `
+    <div class="kpi-grande">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+        <div style="width:44px;height:44px;background:${d.bg};color:${d.color};border-radius:.625rem;
+             display:flex;align-items:center;justify-content:center;font-size:1.25rem" aria-hidden="true">${d.icono}</div>
+        <span style="font-size:.75rem;font-weight:600;color:var(--texto-tenue);background:var(--bg-pagina);
+              padding:.25rem .625rem;border-radius:2rem">#${i+1}</span>
+      </div>
+      <div class="kpi-grande__valor" style="color:${d.color}">${d.valor.toLocaleString('es-CL')}</div>
+      <div class="kpi-grande__label">${d.label}</div>
+      <div class="kpi-grande__barra">
+        <div class="kpi-grande__progreso" style="width:${Math.min(100,Math.round(d.valor/d.max*100))}%;background:${d.color}"></div>
+      </div>
+    </div>`).join('');
+}
+
+async function cargarPendientes() {
+  const res  = await API.get('/php/modules/pedidos.php', { estado:'pendiente', limite:5 });
+  const peds = res.datos?.pedidos ?? [];
+  const tbody = document.getElementById('tbody-pendientes');
+
+  if (!peds.length) {
+    tbody.innerHTML = `<tr><td colspan="5">
+      <div class="estado-vacio" style="padding:2rem">
+        <div class="estado-vacio__icono">✅</div>
+        <div class="estado-vacio__titulo">Sin pendientes</div>
+        <div class="estado-vacio__desc">Todos los pedidos están atendidos.</div>
+      </div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = peds.map(p => `
+  <tr>
+    <td style="font-weight:700;color:var(--color-primario)">#${p.id_pedido}</td>
+    <td style="font-weight:600">${esc(p.cliente_nombre)}</td>
+    <td style="font-weight:700">${fmt(p.total)}</td>
+    <td style="color:var(--texto-tenue);font-size:.8125rem">${fecha(p.creado_en)}</td>
+    <td><a href="pedidos.html" class="btn btn-primario btn-sm">Gestionar</a></td>
+  </tr>`).join('');
+}
+
+const esc   = (s) => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fecha = (s) => s ? new Date(s).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+const fmt   = (v) => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP'}).format(v??0);
+</script>
+</body>
+</html>
