@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Gestor — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+  <style>
+    .bienvenida-gestor {
+      background: linear-gradient(135deg,#0f766e 0%,#0d9488 60%,#06b6d4 100%);
+      border-radius: 1.25rem;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(15,118,110,.3);
+    }
+    .bienvenida-gestor h2 { color:#fff; font-size:1.625rem; margin-bottom:.375rem; }
+    .bienvenida-gestor p  { color:rgba(255,255,255,.75); font-size:.9375rem; }
+    .bienvenida-gestor__hora { color:rgba(255,255,255,.5); font-size:2.5rem; font-weight:800; font-variant-numeric:tabular-nums; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html"  class="sidebar__enlace sidebar__enlace--activo" aria-current="page"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Catálogo</div></div>
+      <a href="productos.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📦</span> Productos</a>
+      <a href="categorias.html" class="sidebar__enlace"><span class="sidebar__enlace-icono">🏷️</span> Categorías</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Ventas</div></div>
+      <a href="pedidos.html"    class="sidebar__enlace"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">G</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">Gestor</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Panel de gestión</h1>
+    </div>
+    <div class="header__acciones">
+      <span class="badge badge--gestor">Gestor</span>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Bienvenida con reloj -->
+    <div class="bienvenida-gestor" role="banner">
+      <div>
+        <h2 id="saludo-gestor">¡Buen día!</h2>
+        <p>Gestione productos y pedidos desde este panel.</p>
+      </div>
+      <div class="bienvenida-gestor__hora" id="reloj" aria-live="off" aria-atomic="true">00:00</div>
+    </div>
+
+    <!-- KPIs compactos -->
+    <div class="grid-kpi" id="grid-kpis" style="margin-bottom:2rem">
+      <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+      <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+      <div class="kpi"><div class="spinner spinner--primario" style="margin:auto"></div></div>
+    </div>
+
+    <!-- Accesos rápidos -->
+    <section aria-labelledby="titulo-accesos">
+      <h2 id="titulo-accesos" style="font-size:1.125rem;font-weight:700;margin-bottom:1rem;color:var(--texto-secundario)">Acciones rápidas</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem">
+        <a href="productos.html" class="tarjeta" style="padding:1.5rem;text-align:center;text-decoration:none;transition:var(--transicion);cursor:pointer"
+           onmouseover="this.style.boxShadow='var(--sombra-lg)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:2.25rem;margin-bottom:.75rem">📦</div>
+          <div style="font-weight:700;margin-bottom:.25rem">Productos</div>
+          <div style="font-size:.8125rem;color:var(--texto-tenue)">Crear y gestionar</div>
+        </a>
+        <a href="categorias.html" class="tarjeta" style="padding:1.5rem;text-align:center;text-decoration:none;transition:var(--transicion)"
+           onmouseover="this.style.boxShadow='var(--sombra-lg)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:2.25rem;margin-bottom:.75rem">🏷️</div>
+          <div style="font-weight:700;margin-bottom:.25rem">Categorías</div>
+          <div style="font-size:.8125rem;color:var(--texto-tenue)">Organizar catálogo</div>
+        </a>
+        <a href="pedidos.html" class="tarjeta" style="padding:1.5rem;text-align:center;text-decoration:none;transition:var(--transicion)"
+           onmouseover="this.style.boxShadow='var(--sombra-lg)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:2.25rem;margin-bottom:.75rem">🛒</div>
+          <div style="font-weight:700;margin-bottom:.25rem">Pedidos</div>
+          <div style="font-size:.8125rem;color:var(--texto-tenue)">Ver y actualizar estados</div>
+        </a>
+        <a href="../perfil.html" class="tarjeta" style="padding:1.5rem;text-align:center;text-decoration:none;transition:var(--transicion)"
+           onmouseover="this.style.boxShadow='var(--sombra-lg)'" onmouseout="this.style.boxShadow=''">
+          <div style="font-size:2.25rem;margin-bottom:.75rem">⚙️</div>
+          <div style="font-weight:700;margin-bottom:.25rem">Mi perfil</div>
+          <div style="font-size:.8125rem;color:var(--texto-tenue)">Datos y contraseña</div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+  if (!Sesion.tieneNivel(3))   { window.location.href = '/html/usuario/dashboard.html'; return; }
+
+  const nombre = Sesion.nombre;
+  document.getElementById('sidebar-nombre').textContent = `${nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-avatar').textContent = nombre.charAt(0).toUpperCase();
+
+  // Saludo según hora
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? '¡Buenos días' : hora < 19 ? '¡Buenas tardes' : '¡Buenas noches';
+  document.getElementById('saludo-gestor').textContent = `${saludo}, ${nombre}!`;
+
+  // Reloj
+  const actualizarReloj = () => {
+    document.getElementById('reloj').textContent =
+      new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  };
+  actualizarReloj();
+  setInterval(actualizarReloj, 30000);
+
+  // KPIs
+  await cargarKPIs();
+})();
+
+async function cargarKPIs() {
+  const [prods, peds] = await Promise.all([
+    API.get('/php/modules/productos.php', { accion: 'listar', limite: 1 }),
+    API.get('/php/modules/pedidos.php',   { limite: 1 }),
+  ]);
+
+  const kpis = [
+    { icono:'📦', bg:'#dbeafe', color:'#1d4ed8', valor: prods.datos?.total ?? '—', etiqueta:'Productos activos' },
+    { icono:'🛒', bg:'#fef9c3', color:'#854d0e', valor: peds.datos?.total  ?? '—', etiqueta:'Pedidos totales' },
+    { icono:'⏳', bg:'#fee2e2', color:'#991b1b', valor:'—', etiqueta:'Pedidos pendientes' },
+  ];
+
+  // Pendientes
+  const pendientes = await API.get('/php/modules/pedidos.php', { estado: 'pendiente', limite: 1 });
+  kpis[2].valor = pendientes.datos?.total ?? '—';
+
+  document.getElementById('grid-kpis').innerHTML = kpis.map(k => `
+    <div class="kpi">
+      <div class="kpi__icono" style="background:${k.bg};color:${k.color}" aria-hidden="true">${k.icono}</div>
+      <div class="kpi__valor">${typeof k.valor === 'number' ? k.valor.toLocaleString('es-CL') : k.valor}</div>
+      <div class="kpi__etiqueta">${k.etiqueta}</div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

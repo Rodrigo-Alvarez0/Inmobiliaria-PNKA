@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorías — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+  <style>
+    .grid-categorias { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.25rem; }
+    .cat-card {
+      background: var(--bg-tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--sombra-sm);
+      transition: var(--transicion);
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-card::before {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(90deg,var(--color-primario),var(--color-primario-light));
+    }
+    .cat-card:hover { box-shadow: var(--sombra-lg); transform: translateY(-2px); }
+    .cat-card__icono {
+      width:48px; height:48px; border-radius:.75rem;
+      background:linear-gradient(135deg,#dbeafe,#ede9fe);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; margin-bottom:1rem;
+    }
+    .cat-card__nombre   { font-size:1.0625rem; font-weight:700; margin-bottom:.375rem; }
+    .cat-card__desc     { font-size:.8125rem; color:var(--texto-secundario); margin-bottom:1rem; min-height:2rem; }
+    .cat-card__meta     { display:flex; align-items:center; justify-content:space-between; }
+    .cat-card__acciones { display:flex; gap:.5rem; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+      <div class="sidebar__seccion" data-nivel-minimo="4"><div class="sidebar__seccion-titulo">Administración</div></div>
+      <a href="usuarios.html"   class="sidebar__enlace" data-nivel-minimo="4"><span class="sidebar__enlace-icono">👥</span> Usuarios</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Catálogo</div></div>
+      <a href="productos.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📦</span> Productos</a>
+      <a href="categorias.html" class="sidebar__enlace sidebar__enlace--activo" aria-current="page"><span class="sidebar__enlace-icono">🏷️</span> Categorías</a>
+      <div class="sidebar__seccion"><div class="sidebar__seccion-titulo">Ventas</div></div>
+      <a href="pedidos.html"    class="sidebar__enlace"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Categorías</h1>
+    </div>
+    <div class="header__acciones">
+      <span id="badge-rol" class="badge"></span>
+      <button class="btn btn-primario btn-sm" id="btn-nueva-cat" data-nivel-minimo="3">+ Nueva categoría</button>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Contador -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+      <p id="contador-cats" style="color:var(--texto-secundario);font-size:.9375rem">Cargando…</p>
+      <div style="display:flex;gap:.75rem">
+        <button id="btn-todas"   class="btn btn-primario  btn-sm">Todas</button>
+        <button id="btn-activas" class="btn btn-tenue btn-sm">Solo activas</button>
+      </div>
+    </div>
+
+    <!-- Grid de tarjetas -->
+    <div class="grid-categorias" id="grid-categorias">
+      <div class="tarjeta" style="grid-column:1/-1;padding:3rem;text-align:center">
+        <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>
+        Cargando categorías…
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal categoría -->
+<div id="modal-cat" class="modal-overlay" role="dialog" aria-modal="true"
+     aria-labelledby="modal-cat-titulo" hidden aria-hidden="true">
+  <div class="modal" style="max-width:460px">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="modal-cat-titulo">Nueva categoría</h2>
+      <button class="modal__cerrar" data-cerrar-modal="modal-cat">✕</button>
+    </div>
+    <div class="modal__cuerpo">
+      <form id="form-cat" novalidate>
+        <input type="hidden" id="cat-id" name="id_categoria" value="0">
+        <div class="grupo-campo">
+          <label class="campo__etiqueta" for="cat-nombre">Nombre <span class="requerido">*</span></label>
+          <input type="text" id="cat-nombre" name="nombre" class="campo__control"
+            data-validar="requerido|minLong:2|maxLong:100"
+            aria-describedby="msg-cat-nombre" placeholder="Ej: Electrónica" required>
+          <span id="msg-cat-nombre" class="campo__mensaje" aria-live="polite"></span>
+        </div>
+        <div class="grupo-campo">
+          <label class="campo__etiqueta" for="cat-desc">Descripción</label>
+          <textarea id="cat-desc" name="descripcion" class="campo__control" rows="3"
+            placeholder="Breve descripción de la categoría…"></textarea>
+        </div>
+        <div class="grupo-campo" id="grupo-cat-activa" style="display:none">
+          <label class="campo__etiqueta" for="cat-activa">Estado</label>
+          <select id="cat-activa" name="activa" class="campo__control">
+            <option value="1">Activa</option>
+            <option value="0">Inactiva</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal__pie">
+      <button class="btn btn-tenue" data-cerrar-modal="modal-cat">Cancelar</button>
+      <button class="btn btn-primario" id="btn-guardar-cat">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+const iconosCat = ['🏷️','📦','💻','👗','🍔','🚗','📚','🎮','🏠','⚗️','🎵','🌿'];
+let modoEdicion = false;
+let filtroActivas = false;
+
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+  if (!Sesion.tieneNivel(3))   { window.location.href = '/html/sin_permisos.html'; return; }
+
+  Sesion.aplicarPermisos();
+  document.getElementById('sidebar-nombre').textContent = `${Sesion.datos.nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-rol').textContent    = capitalizar(Sesion.nombreRol);
+  document.getElementById('sidebar-avatar').textContent = Sesion.nombre.charAt(0).toUpperCase();
+  const badge = document.getElementById('badge-rol');
+  badge.textContent = capitalizar(Sesion.nombreRol);
+  badge.className   = `badge badge--${Sesion.nombreRol}`;
+
+  await cargarCategorias();
+
+  document.getElementById('btn-nueva-cat')?.addEventListener('click', abrirModalCrear);
+  document.getElementById('btn-guardar-cat').addEventListener('click', guardarCategoria);
+  document.getElementById('btn-todas').addEventListener('click',   () => { filtroActivas=false; cargarCategorias(); });
+  document.getElementById('btn-activas').addEventListener('click', () => { filtroActivas=true;  cargarCategorias(); });
+})();
+
+async function cargarCategorias() {
+  const res  = await API.get('/php/modules/categorias.php', filtroActivas ? { activas: 1 } : {});
+  const cats = res.datos?.categorias ?? [];
+
+  document.getElementById('contador-cats').textContent =
+    `${cats.length} categoría${cats.length !== 1 ? 's' : ''}${filtroActivas ? ' activas' : ' en total'}`;
+
+  const grid = document.getElementById('grid-categorias');
+  if (!cats.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--texto-tenue)">
+      <div style="font-size:3rem;margin-bottom:1rem">🏷️</div>
+      <div style="font-size:1.125rem;font-weight:600;color:var(--texto-secundario)">Sin categorías</div>
+      <div style="margin-top:.5rem">Cree la primera categoría para organizar sus productos.</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = cats.map((c, i) => `
+    <div class="cat-card ${!c.activa ? 'opacity:.6' : ''}" data-id="${c.id_categoria}" style="${!c.activa?'opacity:.55':''}">
+      <div class="cat-card__icono" aria-hidden="true">${iconosCat[i % iconosCat.length]}</div>
+      <div class="cat-card__nombre">${esc(c.nombre)}</div>
+      <div class="cat-card__desc">${esc(c.descripcion) || '<em style="color:var(--texto-tenue)">Sin descripción</em>'}</div>
+      <div class="cat-card__meta">
+        <div>
+          <span class="badge ${c.activa ? 'badge--activo' : 'badge--inactivo'}" style="margin-right:.5rem">
+            ${c.activa ? 'Activa' : 'Inactiva'}
+          </span>
+          <span style="font-size:.8125rem;color:var(--texto-tenue)">${c.total_productos} producto${c.total_productos != 1?'s':''}</span>
+        </div>
+        <div class="cat-card__acciones">
+          <button class="btn btn-tenue btn-sm btn-editar-cat" data-id="${c.id_categoria}"
+            aria-label="Editar categoría ${esc(c.nombre)}">✏️</button>
+          ${Sesion.tieneNivel(4) && c.total_productos == 0 ? `
+          <button class="btn btn-peligro btn-sm btn-elim-cat" data-id="${c.id_categoria}" data-nombre="${esc(c.nombre)}"
+            aria-label="Eliminar ${esc(c.nombre)}">🗑️</button>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('.btn-editar-cat').forEach(b =>
+    b.addEventListener('click', () => abrirModalEdicion(parseInt(b.dataset.id))));
+  grid.querySelectorAll('.btn-elim-cat').forEach(b =>
+    b.addEventListener('click', () => confirmarEliminar(parseInt(b.dataset.id), b.dataset.nombre)));
+}
+
+function abrirModalCrear() {
+  modoEdicion = false;
+  document.getElementById('form-cat').reset();
+  Validador.limpiar(document.getElementById('form-cat'));
+  document.getElementById('cat-id').value = '0';
+  document.getElementById('modal-cat-titulo').textContent = 'Nueva categoría';
+  document.getElementById('grupo-cat-activa').style.display = 'none';
+  Modal.abrir('modal-cat');
+}
+
+async function abrirModalEdicion(id) {
+  const res = await API.get('/php/modules/categorias.php');
+  const cat = res.datos?.categorias?.find(c => c.id_categoria == id);
+  if (!cat) { Toast.mostrar('error','Error','Categoría no encontrada.'); return; }
+
+  modoEdicion = true;
+  document.getElementById('cat-id').value          = cat.id_categoria;
+  document.getElementById('cat-nombre').value       = cat.nombre;
+  document.getElementById('cat-desc').value         = cat.descripcion ?? '';
+  document.getElementById('cat-activa').value       = cat.activa;
+  document.getElementById('modal-cat-titulo').textContent = `Editar: ${cat.nombre}`;
+  document.getElementById('grupo-cat-activa').style.display = 'block';
+  Validador.limpiar(document.getElementById('form-cat'));
+  Modal.abrir('modal-cat');
+}
+
+async function guardarCategoria() {
+  const form = document.getElementById('form-cat');
+  if (!Validador.validarFormulario(form)) return;
+
+  const datos  = Object.fromEntries(new FormData(form));
+  const csrf   = await API.obtenerCSRF('categorias');
+  datos.csrf_token = csrf;
+
+  const btn = document.getElementById('btn-guardar-cat');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Guardando…';
+
+  try {
+    const res = modoEdicion
+      ? await API.put('/php/modules/categorias.php', datos)
+      : await API.post('/php/modules/categorias.php', datos);
+
+    if (res.exito) {
+      Toast.mostrar('exito','Guardado', res.mensaje);
+      Modal.cerrar('modal-cat');
+      cargarCategorias();
+    } else {
+      Toast.mostrar('error','Error', res.mensaje);
+    }
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Guardar';
+  }
+}
+
+async function confirmarEliminar(id, nombre) {
+  const ok = await Modal.confirmar({
+    titulo:'¿Eliminar categoría?',
+    mensaje:`¿Desea eliminar "<strong>${nombre}</strong>"?`,
+    textoConfirmar:'Eliminar', tipo:'peligro',
+  });
+  if (!ok) return;
+  const csrf = await API.obtenerCSRF('categorias');
+  const res  = await API.delete('/php/modules/categorias.php', { id_categoria: id, csrf_token: csrf });
+  if (res.exito) { Toast.mostrar('exito','Eliminada', res.mensaje); cargarCategorias(); }
+  else Toast.mostrar('error','Error', res.mensaje);
+}
+
+const esc = (s) => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const capitalizar = (s) => String(s??'').charAt(0).toUpperCase() + String(s??'').slice(1);
+</script>
+</body>
+</html>

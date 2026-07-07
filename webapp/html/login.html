@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Inicio de sesión — PNK_inmovilarias">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; script-src 'self';">
+  <title>Iniciar sesión — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body>
+
+<!-- ─── Saltar al contenido ─────────────────────────────────────────────── -->
+<a href="#formulario-login" class="saltar-contenido">Saltar al formulario</a>
+
+<!-- ─── Página principal ─────────────────────────────────────────────────── -->
+<main class="pagina-auth" id="contenido-principal">
+  <div class="auth-panel" role="main">
+
+    <!-- Cabecera del panel -->
+    <header class="auth-panel__cabecera">
+      <div class="auth-panel__logo" aria-hidden="true">🏢</div>
+      <h1 class="auth-panel__titulo">PNK_inmovilarias</h1>
+      <p class="auth-panel__subtitulo">Ingrese sus credenciales para continuar</p>
+    </header>
+
+    <!-- Tabs: Login / Registro -->
+    <div class="auth-panel__cuerpo">
+      <div class="auth-tabs" role="tablist" aria-label="Modo de acceso">
+        <button
+          class="auth-tab auth-tab--activo"
+          role="tab"
+          id="tab-login"
+          aria-selected="true"
+          aria-controls="panel-login"
+        >Iniciar sesión</button>
+        <button
+          class="auth-tab"
+          role="tab"
+          id="tab-registro"
+          aria-selected="false"
+          aria-controls="panel-registro"
+        >Crear cuenta</button>
+      </div>
+
+      <!-- ─── PANEL LOGIN ──────────────────────────────────────────────── -->
+      <div id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+        <form id="formulario-login" novalidate autocomplete="on">
+
+          <!-- Mensaje de alerta global -->
+          <div id="alerta-login" role="alert" aria-live="assertive" hidden></div>
+
+          <!-- Correo -->
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="login-correo">
+              Correo electrónico <span class="requerido" aria-label="requerido">*</span>
+            </label>
+            <input
+              type="email"
+              id="login-correo"
+              name="correo"
+              class="campo__control"
+              autocomplete="email"
+              inputmode="email"
+              placeholder="usuario@ejemplo.com"
+              data-validar="requerido|correo"
+              aria-describedby="login-correo-msg"
+              required
+            >
+            <span id="login-correo-msg" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="login-contrasena">
+              Contraseña <span class="requerido" aria-label="requerido">*</span>
+            </label>
+            <div style="position:relative">
+              <input
+                type="password"
+                id="login-contrasena"
+                name="contrasena"
+                class="campo__control"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                data-validar="requerido|minLong:8"
+                aria-describedby="login-contra-msg"
+                required
+              >
+              <button
+                type="button"
+                class="btn-ver-contra"
+                aria-label="Mostrar/ocultar contraseña"
+                aria-pressed="false"
+                style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--texto-tenue);font-size:1rem"
+              >👁</button>
+            </div>
+            <span id="login-contra-msg" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+
+          <!-- Recordar sesión -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+            <label style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;cursor:pointer">
+              <input type="checkbox" name="recordar" style="width:1rem;height:1rem;accent-color:var(--color-primario)">
+              Recordar sesión
+            </label>
+            <a href="recuperar.html" style="font-size:.875rem;color:var(--color-primario)">¿Olvidó su contraseña?</a>
+          </div>
+
+          <!-- Botón enviar -->
+          <button type="submit" class="btn btn-primario btn-bloque btn-lg" id="btn-login">
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+
+      <!-- ─── PANEL REGISTRO ───────────────────────────────────────────── -->
+      <div id="panel-registro" role="tabpanel" aria-labelledby="tab-registro" hidden>
+        <form id="formulario-registro" novalidate autocomplete="off">
+
+          <div id="alerta-registro" role="alert" aria-live="assertive" hidden></div>
+
+          <div class="grid-2" style="gap:1rem">
+            <!-- Nombre -->
+            <div class="grupo-campo">
+              <label class="campo__etiqueta" for="reg-nombre">
+                Nombre <span class="requerido">*</span>
+              </label>
+              <input type="text" id="reg-nombre" name="nombre" class="campo__control"
+                autocomplete="given-name" placeholder="Juan"
+                data-validar="requerido|minLong:2|maxLong:100"
+                aria-describedby="reg-nombre-msg" required>
+              <span id="reg-nombre-msg" class="campo__mensaje" aria-live="polite"></span>
+            </div>
+
+            <!-- Apellido -->
+            <div class="grupo-campo">
+              <label class="campo__etiqueta" for="reg-apellido">
+                Apellido <span class="requerido">*</span>
+              </label>
+              <input type="text" id="reg-apellido" name="apellido" class="campo__control"
+                autocomplete="family-name" placeholder="Pérez"
+                data-validar="requerido|minLong:2|maxLong:100"
+                aria-describedby="reg-apellido-msg" required>
+              <span id="reg-apellido-msg" class="campo__mensaje" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <!-- Correo -->
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="reg-correo">
+              Correo electrónico <span class="requerido">*</span>
+            </label>
+            <input type="email" id="reg-correo" name="correo" class="campo__control"
+              autocomplete="email" inputmode="email" placeholder="usuario@ejemplo.com"
+              data-validar="requerido|correo"
+              aria-describedby="reg-correo-msg" required>
+            <span id="reg-correo-msg" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+
+          <!-- Contraseña -->
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="reg-contrasena">
+              Contraseña <span class="requerido">*</span>
+            </label>
+            <input type="password" id="reg-contrasena" name="contrasena" class="campo__control"
+              autocomplete="new-password" placeholder="Mínimo 8 caracteres"
+              data-validar="requerido|contrasena"
+              data-fuerza-contrasena="fuerza-reg"
+              aria-describedby="reg-contra-msg fuerza-reg" required>
+            <span id="reg-contra-msg" class="campo__mensaje" aria-live="polite"></span>
+            <div id="fuerza-reg" class="fuerza-contrasena" aria-label="Fortaleza de contraseña">
+              <div class="fuerza-contrasena__barra">
+                <div class="fuerza-contrasena__progreso"></div>
+              </div>
+              <div class="fuerza-contrasena__texto"></div>
+            </div>
+          </div>
+
+          <!-- Confirmar contraseña -->
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="reg-confirmar">
+              Confirmar contraseña <span class="requerido">*</span>
+            </label>
+            <input type="password" id="reg-confirmar" name="confirmar" class="campo__control"
+              autocomplete="new-password" placeholder="Repita la contraseña"
+              data-validar="requerido|igualar:reg-contrasena"
+              aria-describedby="reg-conf-msg" required>
+            <span id="reg-conf-msg" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primario btn-bloque btn-lg" id="btn-registro">
+            Crear cuenta
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="auth-panel__pie">
+      <p>Al continuar, acepta nuestros <a href="#">Términos de uso</a> y <a href="#">Política de privacidad</a>.</p>
+    </footer>
+  </div>
+</main>
+
+<!-- ─── Scripts ───────────────────────────────────────────────────────────── -->
+<script src="../js/utilidades.js"></script>
+<script>
+'use strict';
+
+// ─── Tabs ────────────────────────────────────────────────────────────────────
+const tabs   = document.querySelectorAll('.auth-tab');
+const panels = document.querySelectorAll('[role="tabpanel"]');
+
+tabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    const panelId = tab.getAttribute('aria-controls');
+
+    tabs.forEach(t => {
+      t.classList.remove('auth-tab--activo');
+      t.setAttribute('aria-selected', 'false');
+    });
+    panels.forEach(p => { p.hidden = true; });
+
+    tab.classList.add('auth-tab--activo');
+    tab.setAttribute('aria-selected', 'true');
+    document.getElementById(panelId).hidden = false;
+  });
+
+  // Navegación por teclado (←→)
+  tab.addEventListener('keydown', (e) => {
+    const lista  = [...tabs];
+    const indice = lista.indexOf(e.target);
+    if (e.key === 'ArrowRight') lista[(indice + 1) % lista.length].click();
+    if (e.key === 'ArrowLeft')  lista[(indice - 1 + lista.length) % lista.length].click();
+  });
+});
+
+// ─── Mostrar/ocultar contraseña ───────────────────────────────────────────────
+document.querySelectorAll('.btn-ver-contra').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const input   = btn.previousElementSibling;
+    const visible = input.type === 'text';
+    input.type     = visible ? 'password' : 'text';
+    btn.textContent = visible ? '👁' : '🙈';
+    btn.setAttribute('aria-pressed', String(!visible));
+  });
+});
+
+// ─── Formulario de LOGIN ──────────────────────────────────────────────────────
+document.getElementById('formulario-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await enviarFormulario(
+    e.target,
+    '/php/modules/autenticacion.php',
+    'login',
+    {
+      formularioCSRF: 'login',
+      onExito(res) {
+        Toast.mostrar('exito', '¡Bienvenido!', res.mensaje, 3000);
+        setTimeout(() => window.location.href = res.datos?.redirigir ?? '/usuario/dashboard.html', 800);
+      },
+      onError(res) {
+        const alerta = document.getElementById('alerta-login');
+        alerta.hidden    = false;
+        alerta.className = 'alerta alerta--error';
+        alerta.innerHTML = `
+          <span class="alerta__icono" aria-hidden="true">❌</span>
+          <div class="alerta__cuerpo">
+            <div class="alerta__titulo">Error de autenticación</div>
+            <div>${res.mensaje}</div>
+          </div>`;
+      },
+    }
+  );
+});
+
+// ─── Formulario de REGISTRO ───────────────────────────────────────────────────
+document.getElementById('formulario-registro').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  await enviarFormulario(
+    e.target,
+    '/php/modules/autenticacion.php',
+    'registro',
+    {
+      formularioCSRF: 'registro',
+      onExito(res) {
+        Toast.mostrar('exito', '¡Cuenta creada!', res.mensaje, 4000);
+        setTimeout(() => {
+          document.getElementById('tab-login').click();
+          document.getElementById('formulario-registro').reset();
+        }, 1500);
+      },
+      onError(res) {
+        const alerta = document.getElementById('alerta-registro');
+        alerta.hidden    = false;
+        alerta.className = 'alerta alerta--error';
+        alerta.innerHTML = `
+          <span class="alerta__icono" aria-hidden="true">❌</span>
+          <div class="alerta__cuerpo">
+            <div class="alerta__titulo">Error al registrar</div>
+            <div>${res.mensaje}</div>
+          </div>`;
+      },
+    }
+  );
+});
+
+// ─── Ocultar alerta al escribir ───────────────────────────────────────────────
+['formulario-login', 'formulario-registro'].forEach((id) => {
+  document.getElementById(id).addEventListener('input', () => {
+    const alerta = document.getElementById('alerta-' + id.replace('formulario-', ''));
+    if (alerta) alerta.hidden = true;
+  });
+});
+</script>
+</body>
+</html>

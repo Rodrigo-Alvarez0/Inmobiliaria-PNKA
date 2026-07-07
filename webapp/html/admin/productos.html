@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gestión de productos — PNK_inmovilarias">
+  <title>Productos — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+</head>
+<body>
+
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido principal</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+
+  <!-- ─── SIDEBAR ─────────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono" aria-hidden="true">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">📊</span> Resumen</a>
+      <div class="sidebar__seccion" data-nivel-minimo="4"><div class="sidebar__seccion-titulo">Administración</div></div>
+      <a href="usuarios.html"   class="sidebar__enlace" data-nivel-minimo="4"><span class="sidebar__enlace-icono">👥</span> Usuarios</a>
+      <a href="roles.html"      class="sidebar__enlace" data-nivel-minimo="5"><span class="sidebar__enlace-icono">🔑</span> Roles</a>
+      <a href="bitacora.html"   class="sidebar__enlace" data-nivel-minimo="5"><span class="sidebar__enlace-icono">📋</span> Bitácora</a>
+      <div class="sidebar__seccion" data-nivel-minimo="3"><div class="sidebar__seccion-titulo">Catálogo</div></div>
+      <a href="productos.html"  class="sidebar__enlace sidebar__enlace--activo" aria-current="page" data-nivel-minimo="3"><span class="sidebar__enlace-icono">📦</span> Productos</a>
+      <a href="categorias.html" class="sidebar__enlace" data-nivel-minimo="3"><span class="sidebar__enlace-icono">🏷️</span> Categorías</a>
+      <div class="sidebar__seccion" data-nivel-minimo="3"><div class="sidebar__seccion-titulo">Ventas</div></div>
+      <a href="pedidos.html"    class="sidebar__enlace" data-nivel-minimo="3"><span class="sidebar__enlace-icono">🛒</span> Pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html"  class="sidebar__enlace"><span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol"    id="sidebar-rol">—</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── HEADER ───────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">☰</button>
+      <h1 class="header__titulo">Gestión de productos</h1>
+    </div>
+    <div class="header__acciones">
+      <span id="badge-rol" class="badge"></span>
+      <button class="btn btn-primario btn-sm" id="btn-nuevo-producto" data-nivel-minimo="3">+ Nuevo producto</button>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <!-- ─── CONTENIDO ────────────────────────────────────────────────────── -->
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Barra de herramientas -->
+    <div class="barra-herramientas" role="search" aria-label="Filtros de productos">
+      <div class="busqueda" style="flex:2">
+        <span class="busqueda__icono" aria-hidden="true">🔍</span>
+        <input type="search" id="input-buscar" class="busqueda__campo"
+          placeholder="Buscar por nombre o descripción…" aria-label="Buscar productos">
+      </div>
+      <select id="filtro-categoria" class="campo__control" style="width:auto;min-width:160px" aria-label="Filtrar por categoría">
+        <option value="">Todas las categorías</option>
+      </select>
+      <select id="filtro-activo" class="campo__control" style="width:auto" aria-label="Filtrar por estado" data-nivel-minimo="3">
+        <option value="">Todos los estados</option>
+        <option value="1">Activos</option>
+        <option value="0">Inactivos</option>
+      </select>
+      <select id="filtro-limite" class="campo__control" style="width:auto" aria-label="Registros por página">
+        <option value="10">10 / pág.</option>
+        <option value="20" selected>20 / pág.</option>
+        <option value="50">50 / pág.</option>
+      </select>
+    </div>
+
+    <!-- Tabla -->
+    <div class="tarjeta" style="overflow:hidden">
+      <div class="tabla-contenedor">
+        <table class="tabla" aria-label="Lista de productos" aria-live="polite">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Categoría</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Stock</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Creado</th>
+              <th scope="col"><span class="sr-solo">Acciones</span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-productos">
+            <tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--texto-tenue)">
+              <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando productos…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="paginacion" id="paginacion-productos">
+        <div class="paginacion__info">—</div>
+        <div class="paginacion__botones" role="navigation" aria-label="Paginación de productos"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     MODAL PRODUCTO
+     ════════════════════════════════════════════════ -->
+<div id="modal-producto" class="modal-overlay" role="dialog" aria-modal="true"
+     aria-labelledby="modal-producto-titulo" hidden aria-hidden="true">
+  <div class="modal" style="max-width:580px">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="modal-producto-titulo">Nuevo producto</h2>
+      <button class="modal__cerrar" data-cerrar-modal="modal-producto" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal__cuerpo">
+      <form id="form-producto" novalidate>
+        <input type="hidden" id="prod-id" name="id_producto" value="0">
+
+        <div class="grupo-campo">
+          <label class="campo__etiqueta" for="prod-nombre">Nombre del producto <span class="requerido">*</span></label>
+          <input type="text" id="prod-nombre" name="nombre" class="campo__control"
+            data-validar="requerido|minLong:2|maxLong:200"
+            aria-describedby="msg-prod-nombre" placeholder="Ej: Laptop Dell XPS 15" required>
+          <span id="msg-prod-nombre" class="campo__mensaje" aria-live="polite"></span>
+        </div>
+
+        <div class="grupo-campo">
+          <label class="campo__etiqueta" for="prod-descripcion">Descripción</label>
+          <textarea id="prod-descripcion" name="descripcion" class="campo__control"
+            placeholder="Descripción detallada del producto…" rows="3"
+            aria-describedby="msg-prod-desc"></textarea>
+          <span id="msg-prod-desc" class="campo__mensaje" aria-live="polite"></span>
+        </div>
+
+        <div class="grid-2" style="gap:1rem">
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="prod-precio">Precio (CLP) <span class="requerido">*</span></label>
+            <input type="number" id="prod-precio" name="precio" class="campo__control"
+              data-validar="requerido|numero|positivo" min="0" step="0.01"
+              aria-describedby="msg-prod-precio" placeholder="0.00" required>
+            <span id="msg-prod-precio" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="prod-stock">Stock <span class="requerido">*</span></label>
+            <input type="number" id="prod-stock" name="stock" class="campo__control"
+              data-validar="requerido|entero|positivo" min="0" step="1"
+              aria-describedby="msg-prod-stock" placeholder="0" required>
+            <span id="msg-prod-stock" class="campo__mensaje" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap:1rem">
+          <div class="grupo-campo">
+            <label class="campo__etiqueta" for="prod-categoria">Categoría</label>
+            <select id="prod-categoria" name="id_categoria" class="campo__control">
+              <option value="">Sin categoría</option>
+            </select>
+          </div>
+          <div class="grupo-campo" id="grupo-prod-activo" style="display:none">
+            <label class="campo__etiqueta" for="prod-activo">Estado</label>
+            <select id="prod-activo" name="activo" class="campo__control">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <div class="modal__pie">
+      <button class="btn btn-tenue" data-cerrar-modal="modal-producto">Cancelar</button>
+      <button class="btn btn-primario" id="btn-guardar-producto">Guardar producto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal detalle (solo lectura para nivel < 3) -->
+<div id="modal-detalle" class="modal-overlay" role="dialog" aria-modal="true"
+     aria-labelledby="detalle-titulo" hidden aria-hidden="true">
+  <div class="modal" style="max-width:500px">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="detalle-titulo">Detalle del producto</h2>
+      <button class="modal__cerrar" data-cerrar-modal="modal-detalle">✕</button>
+    </div>
+    <div class="modal__cuerpo" id="detalle-cuerpo">—</div>
+    <div class="modal__pie"><button class="btn btn-tenue" data-cerrar-modal="modal-detalle">Cerrar</button></div>
+  </div>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+const estado = { pagina: 1, limite: 20, buscar: '', categoria: '', activo: '', modoEdicion: false };
+let timeoutBusqueda = null;
+let categorias      = [];
+
+// ─── Inicio ────────────────────────────────────────────────────────────────────
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+  if (!Sesion.tieneNivel(2))   { window.location.href = '/html/sin_permisos.html'; return; }
+
+  Sesion.aplicarPermisos();
+  document.getElementById('sidebar-nombre').textContent = `${Sesion.datos.nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-rol').textContent    = capitalizar(Sesion.nombreRol);
+  document.getElementById('sidebar-avatar').textContent = Sesion.nombre.charAt(0).toUpperCase();
+  const badge = document.getElementById('badge-rol');
+  badge.textContent = capitalizar(Sesion.nombreRol);
+  badge.className   = `badge badge--${Sesion.nombreRol}`;
+
+  await cargarCategorias();
+  await cargarProductos();
+  enlazarEventos();
+})();
+
+// ─── Categorías ────────────────────────────────────────────────────────────────
+async function cargarCategorias() {
+  const res = await API.get('/php/modules/productos.php', { accion: 'categorias' });
+  categorias = res.datos?.categorias ?? [];
+
+  const selectFiltro = document.getElementById('filtro-categoria');
+  const selectModal  = document.getElementById('prod-categoria');
+  const opcion       = (c) => `<option value="${c.id_categoria}">${esc(c.nombre)}</option>`;
+  const opts         = categorias.map(opcion).join('');
+  selectFiltro.insertAdjacentHTML('beforeend', opts);
+  selectModal.insertAdjacentHTML('beforeend', opts);
+}
+
+// ─── Tabla ─────────────────────────────────────────────────────────────────────
+async function cargarProductos(extra = {}) {
+  Object.assign(estado, extra);
+  const tbody = document.getElementById('tbody-productos');
+  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2.5rem;color:var(--texto-tenue)">
+    <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…</td></tr>`;
+
+  const params = { accion: 'listar', pagina: estado.pagina, limite: estado.limite };
+  if (estado.buscar)   params.buscar   = estado.buscar;
+  if (estado.categoria) params.categoria = estado.categoria;
+  if (estado.activo !== '') params.activo = estado.activo;
+
+  const res  = await API.get('/php/modules/productos.php', params);
+  const data = res.datos ?? {};
+  renderizarProductos(data.productos ?? []);
+  renderizarPaginacion(data.total ?? 0, data.total_paginas ?? 0);
+}
+
+function renderizarProductos(productos) {
+  const tbody        = document.getElementById('tbody-productos');
+  const puedeEditar  = Sesion.tieneNivel(3);
+  const puedeElim    = Sesion.tieneNivel(4);
+
+  if (!productos.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="estado-vacio">
+      <div class="estado-vacio__icono">📦</div>
+      <div class="estado-vacio__titulo">Sin productos</div>
+      <div class="estado-vacio__desc">No hay productos que coincidan con la búsqueda.</div>
+      ${puedeEditar ? `<button class="btn btn-primario btn-sm" onclick="abrirModalCrear()">Agregar producto</button>` : ''}
+    </div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = productos.map(p => `
+  <tr data-id="${p.id_producto}">
+    <td data-etiqueta="ID" style="color:var(--texto-tenue);font-size:.8125rem">#${p.id_producto}</td>
+    <td data-etiqueta="Producto">
+      <div>
+        <div style="font-weight:600">${esc(p.nombre)}</div>
+        ${p.descripcion ? `<div style="font-size:.8125rem;color:var(--texto-tenue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px">${esc(p.descripcion)}</div>` : ''}
+      </div>
+    </td>
+    <td data-etiqueta="Categoría">
+      ${p.categoria_nombre ? `<span class="badge badge--confirmado">${esc(p.categoria_nombre)}</span>` : '<span style="color:var(--texto-tenue)">—</span>'}
+    </td>
+    <td data-etiqueta="Precio" style="font-weight:600;font-variant-numeric:tabular-nums">
+      ${formatearPrecio(p.precio)}
+    </td>
+    <td data-etiqueta="Stock">
+      <span class="${parseInt(p.stock) === 0 ? 'badge badge--inactivo' : parseInt(p.stock) <= 5 ? 'badge badge--pendiente' : 'badge badge--activo'}">
+        ${parseInt(p.stock).toLocaleString('es-CL')} uds.
+      </span>
+    </td>
+    <td data-etiqueta="Estado">
+      <span class="badge ${p.activo ? 'badge--activo' : 'badge--inactivo'}">${p.activo ? '● Activo' : '● Inactivo'}</span>
+    </td>
+    <td data-etiqueta="Creado" style="color:var(--texto-secundario);font-size:.8125rem">${fecha(p.creado_en)}</td>
+    <td data-etiqueta="Acciones">
+      <div style="display:flex;gap:.375rem;justify-content:flex-end">
+        <button class="btn btn-tenue btn-sm btn-ver"
+          data-id="${p.id_producto}" aria-label="Ver detalle de ${esc(p.nombre)}">👁</button>
+        ${puedeEditar ? `<button class="btn btn-tenue btn-sm btn-editar"
+          data-id="${p.id_producto}" aria-label="Editar ${esc(p.nombre)}">✏️</button>` : ''}
+        ${puedeElim ? `<button class="btn btn-peligro btn-sm btn-eliminar"
+          data-id="${p.id_producto}" data-nombre="${esc(p.nombre)}"
+          aria-label="Eliminar ${esc(p.nombre)}">🗑️</button>` : ''}
+      </div>
+    </td>
+  </tr>`).join('');
+
+  tbody.querySelectorAll('.btn-ver').forEach(b =>
+    b.addEventListener('click', () => verDetalle(parseInt(b.dataset.id))));
+  tbody.querySelectorAll('.btn-editar').forEach(b =>
+    b.addEventListener('click', () => abrirModalEdicion(parseInt(b.dataset.id))));
+  tbody.querySelectorAll('.btn-eliminar').forEach(b =>
+    b.addEventListener('click', () => confirmarEliminar(parseInt(b.dataset.id), b.dataset.nombre)));
+}
+
+function renderizarPaginacion(total, totalPags) {
+  const info    = document.querySelector('#paginacion-productos .paginacion__info');
+  const botones = document.querySelector('#paginacion-productos .paginacion__botones');
+  const ini = (estado.pagina - 1) * estado.limite + 1;
+  const fin = Math.min(estado.pagina * estado.limite, total);
+  info.textContent = total ? `Mostrando ${ini}–${fin} de ${total} productos` : 'Sin resultados';
+
+  let html = `<button class="paginacion__btn" data-p="${estado.pagina-1}" ${estado.pagina<=1?'disabled':''}>‹</button>`;
+  for (let p = Math.max(1,estado.pagina-2); p <= Math.min(totalPags,estado.pagina+2); p++) {
+    html += `<button class="paginacion__btn ${p===estado.pagina?'paginacion__btn--activo':''}" data-p="${p}">${p}</button>`;
+  }
+  html += `<button class="paginacion__btn" data-p="${estado.pagina+1}" ${estado.pagina>=totalPags?'disabled':''}>›</button>`;
+  botones.innerHTML = html;
+  botones.querySelectorAll('[data-p]').forEach(b =>
+    b.addEventListener('click', () => !b.disabled && cargarProductos({ pagina: parseInt(b.dataset.p) })));
+}
+
+// ─── CRUD ──────────────────────────────────────────────────────────────────────
+function abrirModalCrear() {
+  estado.modoEdicion = false;
+  const form = document.getElementById('form-producto');
+  form.reset();
+  Validador.limpiar(form);
+  document.getElementById('prod-id').value  = '0';
+  document.getElementById('modal-producto-titulo').textContent = 'Nuevo producto';
+  document.getElementById('grupo-prod-activo').style.display  = 'none';
+  Modal.abrir('modal-producto');
+}
+
+async function abrirModalEdicion(id) {
+  const res = await API.get('/php/modules/productos.php', { accion: 'detalle', id });
+  if (!res.exito) { Toast.mostrar('error', 'Error', res.mensaje); return; }
+  const p = res.datos.producto;
+
+  estado.modoEdicion = true;
+  const form = document.getElementById('form-producto');
+  Validador.limpiar(form);
+
+  document.getElementById('prod-id').value           = p.id_producto;
+  document.getElementById('prod-nombre').value        = p.nombre;
+  document.getElementById('prod-descripcion').value   = p.descripcion ?? '';
+  document.getElementById('prod-precio').value        = p.precio;
+  document.getElementById('prod-stock').value         = p.stock;
+  document.getElementById('prod-categoria').value     = p.id_categoria ?? '';
+  document.getElementById('prod-activo').value        = p.activo;
+  document.getElementById('modal-producto-titulo').textContent = `Editar: ${p.nombre}`;
+  document.getElementById('grupo-prod-activo').style.display  = 'block';
+  Modal.abrir('modal-producto');
+}
+
+async function verDetalle(id) {
+  const res = await API.get('/php/modules/productos.php', { accion: 'detalle', id });
+  if (!res.exito) { Toast.mostrar('error', 'Error', res.mensaje); return; }
+  const p = res.datos.producto;
+
+  document.getElementById('detalle-titulo').textContent = esc(p.nombre);
+  document.getElementById('detalle-cuerpo').innerHTML = `
+    <dl style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.5rem">
+      <div><dt style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Precio</dt>
+           <dd style="font-size:1.25rem;font-weight:700;color:var(--color-primario)">${formatearPrecio(p.precio)}</dd></div>
+      <div><dt style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Stock</dt>
+           <dd style="font-size:1.25rem;font-weight:700">${parseInt(p.stock).toLocaleString('es-CL')} uds.</dd></div>
+      <div><dt style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Categoría</dt>
+           <dd>${p.categoria_nombre ? `<span class="badge badge--confirmado">${esc(p.categoria_nombre)}</span>` : '—'}</dd></div>
+      <div><dt style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600">Estado</dt>
+           <dd><span class="badge ${p.activo?'badge--activo':'badge--inactivo'}">${p.activo?'Activo':'Inactivo'}</span></dd></div>
+    </dl>
+    ${p.descripcion ? `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--borde)">
+      <div style="font-size:.75rem;color:var(--texto-tenue);text-transform:uppercase;font-weight:600;margin-bottom:.5rem">Descripción</div>
+      <p style="color:var(--texto-secundario)">${esc(p.descripcion)}</p>
+    </div>` : ''}
+    <div style="margin-top:1rem;font-size:.8125rem;color:var(--texto-tenue)">Creado: ${fecha(p.creado_en)}</div>`;
+  Modal.abrir('modal-detalle');
+}
+
+async function guardarProducto() {
+  const form = document.getElementById('form-producto');
+  if (!Validador.validarFormulario(form)) return;
+
+  const datos   = Object.fromEntries(new FormData(form));
+  const esNuevo = !estado.modoEdicion;
+  const csrf    = await API.obtenerCSRF('productos');
+  datos.csrf_token = csrf;
+
+  const btn = document.getElementById('btn-guardar-producto');
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner"></span> Guardando…';
+
+  try {
+    const res = esNuevo
+      ? await API.post('/php/modules/productos.php', datos)
+      : await API.put('/php/modules/productos.php',  datos);
+
+    if (res.exito) {
+      Toast.mostrar('exito', 'Guardado', res.mensaje);
+      Modal.cerrar('modal-producto');
+      cargarProductos();
+    } else {
+      if (res.datos?.errores) Validador.mostrarErroresServidor(form, res.datos.errores);
+      Toast.mostrar('error', 'Error', res.mensaje);
+    }
+  } finally {
+    btn.disabled  = false;
+    btn.innerHTML = 'Guardar producto';
+  }
+}
+
+async function confirmarEliminar(id, nombre) {
+  const ok = await Modal.confirmar({
+    titulo:         '¿Eliminar producto?',
+    mensaje:        `¿Desea desactivar "<strong>${nombre}</strong>"? El producto dejará de aparecer en el catálogo.`,
+    textoConfirmar: 'Eliminar',
+    tipo:           'peligro',
+  });
+  if (!ok) return;
+
+  const csrf = await API.obtenerCSRF('eliminar_producto');
+  const res  = await API.delete('/php/modules/productos.php', { id_producto: id, csrf_token: csrf });
+  if (res.exito) {
+    Toast.mostrar('exito', 'Eliminado', res.mensaje);
+    cargarProductos();
+  } else {
+    Toast.mostrar('error', 'Error', res.mensaje);
+  }
+}
+
+// ─── Eventos ───────────────────────────────────────────────────────────────────
+function enlazarEventos() {
+  document.getElementById('btn-nuevo-producto')?.addEventListener('click', abrirModalCrear);
+  document.getElementById('btn-guardar-producto').addEventListener('click', guardarProducto);
+
+  document.getElementById('input-buscar').addEventListener('input', (e) => {
+    clearTimeout(timeoutBusqueda);
+    timeoutBusqueda = setTimeout(() => cargarProductos({ buscar: e.target.value, pagina: 1 }), 400);
+  });
+  document.getElementById('filtro-categoria').addEventListener('change', (e) =>
+    cargarProductos({ categoria: e.target.value, pagina: 1 }));
+  document.getElementById('filtro-activo').addEventListener('change', (e) =>
+    cargarProductos({ activo: e.target.value, pagina: 1 }));
+  document.getElementById('filtro-limite').addEventListener('change', (e) =>
+    cargarProductos({ limite: parseInt(e.target.value), pagina: 1 }));
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+const esc = (s) => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const capitalizar = (s) => String(s??'').charAt(0).toUpperCase() + String(s??'').slice(1);
+const fecha = (s) => s ? new Date(s).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+const formatearPrecio = (v) => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP'}).format(v??0);
+</script>
+</body>
+</html>

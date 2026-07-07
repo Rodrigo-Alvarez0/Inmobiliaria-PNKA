@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página no encontrada — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <style>
+    body {
+      min-height:100vh;
+      background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);
+      display:flex; align-items:center; justify-content:center; padding:2rem;
+    }
+    .error-codigo {
+      font-size:clamp(5rem,20vw,9rem); font-weight:800;
+      background:linear-gradient(135deg,#60a5fa,#34d399);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text; line-height:1; margin-bottom:1rem;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center;max-width:480px" role="main">
+    <div class="error-codigo" aria-label="Error 404">404</div>
+    <h1 style="color:#f1f5f9;font-size:1.75rem;margin-bottom:.75rem">Página no encontrada</h1>
+    <p style="color:#94a3b8;font-size:1rem;line-height:1.7;margin-bottom:2rem">
+      La página que busca no existe o fue movida a otra dirección.
+    </p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <button onclick="history.back()" class="btn btn-tenue">← Volver</button>
+      <a href="/" class="btn btn-primario">Ir al inicio</a>
+    </div>
+  </div>
+</body>
+</html>

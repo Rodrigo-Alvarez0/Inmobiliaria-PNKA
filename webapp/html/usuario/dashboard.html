@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi panel — PNK_inmovilarias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="../../css/estilos.css">
+  <style>
+    .hero-usuario {
+      background: linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#1d4ed8 100%);
+      border-radius:1.25rem; padding:2.5rem;
+      margin-bottom:2rem; position:relative; overflow:hidden;
+      box-shadow: 0 8px 32px rgba(29,78,216,.25);
+    }
+    .hero-usuario::after {
+      content:''; position:absolute; right:-60px; top:-60px;
+      width:220px; height:220px; border-radius:50%;
+      background:rgba(255,255,255,.04); pointer-events:none;
+    }
+    .hero-usuario h2 { color:#fff; font-size:1.75rem; margin-bottom:.5rem; }
+    .hero-usuario p  { color:rgba(255,255,255,.65); font-size:1rem; max-width:520px; }
+    .pedido-card {
+      background:var(--bg-tarjeta); border:1px solid var(--borde);
+      border-radius:1rem; padding:1.5rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
+      box-shadow:var(--sombra-sm); transition:var(--transicion);
+    }
+    .pedido-card:hover { box-shadow:var(--sombra); }
+    .pedido-card__num  { font-size:1.0625rem; font-weight:700; color:var(--color-primario); }
+    .pedido-card__fecha{ font-size:.8125rem; color:var(--texto-tenue); margin-top:.25rem; }
+    .pedido-card__total{ font-size:1.25rem; font-weight:800; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="saltar-contenido">Ir al contenido</a>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <a href="dashboard.html" class="sidebar__logo">
+      <div class="sidebar__logo-icono">🏢</div>
+      <span class="sidebar__logo-texto">PNK_inmovilarias</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html" class="sidebar__enlace sidebar__enlace--activo" aria-current="page">
+        <span class="sidebar__enlace-icono">🏠</span> Mi panel</a>
+      <a href="mis-pedidos.html" class="sidebar__enlace">
+        <span class="sidebar__enlace-icono">🛒</span> Mis pedidos</a>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:1rem 1.5rem"></div>
+      <a href="../perfil.html" class="sidebar__enlace">
+        <span class="sidebar__enlace-icono">⚙️</span> Mi perfil</a>
+    </nav>
+    <div class="sidebar__usuario">
+      <div class="sidebar__avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar__info">
+        <div class="sidebar__nombre" id="sidebar-nombre">Cargando…</div>
+        <div class="sidebar__rol">Usuario</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:1rem">
+      <button class="btn btn-tenue btn-sm btn-menu-movil" aria-label="Menú">☰</button>
+      <h1 class="header__titulo">Mi panel</h1>
+    </div>
+    <div class="header__acciones">
+      <span class="badge badge--usuario">Usuario</span>
+      <button class="btn btn-tenue btn-sm" data-accion-cerrar-sesion>🚪 Salir</button>
+    </div>
+  </header>
+
+  <main class="contenido-principal" id="contenido-principal">
+
+    <!-- Hero personalizado -->
+    <div class="hero-usuario" role="banner">
+      <h2 id="saludo-usuario">Bienvenido</h2>
+      <p>Desde aquí puede revisar sus pedidos y actualizar su información personal.</p>
+      <div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        <a href="mis-pedidos.html" class="btn btn-primario">Ver mis pedidos</a>
+        <a href="../perfil.html"   class="btn" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3)">
+          Editar perfil
+        </a>
+      </div>
+    </div>
+
+    <!-- Resumen de pedidos propios -->
+    <section aria-labelledby="titulo-resumen-peds">
+      <div class="tarjeta">
+        <div class="tarjeta__cabecera">
+          <h2 class="tarjeta__titulo" id="titulo-resumen-peds">Mis pedidos recientes</h2>
+          <a href="mis-pedidos.html" class="btn btn-tenue btn-sm">Ver todos</a>
+        </div>
+        <div class="tarjeta__cuerpo" id="mis-pedidos-recientes">
+          <div style="text-align:center;padding:2rem;color:var(--texto-tenue)">
+            <div class="spinner spinner--primario" style="margin:0 auto .75rem"></div>Cargando…
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="../../js/utilidades.js"></script>
+<script>
+'use strict';
+
+(async () => {
+  await Sesion.cargar();
+  if (!Sesion.estaAutenticado) { window.location.href = '/html/login.html'; return; }
+
+  const nombre = Sesion.nombre;
+  document.getElementById('sidebar-nombre').textContent = `${nombre} ${Sesion.datos.apellido ?? ''}`.trim();
+  document.getElementById('sidebar-avatar').textContent = nombre.charAt(0).toUpperCase();
+
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+  document.getElementById('saludo-usuario').textContent = `${saludo}, ${nombre} 👋`;
+
+  await cargarMisPedidos();
+})();
+
+async function cargarMisPedidos() {
+  const res  = await API.get('/php/modules/pedidos.php', { limite: 5, pagina: 1 });
+  const peds = res.datos?.pedidos ?? [];
+  const cont = document.getElementById('mis-pedidos-recientes');
+
+  if (!peds.length) {
+    cont.innerHTML = `
+      <div class="estado-vacio">
+        <div class="estado-vacio__icono">🛒</div>
+        <div class="estado-vacio__titulo">Sin pedidos aún</div>
+        <div class="estado-vacio__desc">Cuando realice un pedido aparecerá aquí.</div>
+      </div>`;
+    return;
+  }
+
+  cont.innerHTML = `<div style="display:flex;flex-direction:column;gap:.75rem">` +
+    peds.map(p => `
+    <div class="pedido-card">
+      <div>
+        <div class="pedido-card__num">Pedido #${p.id_pedido}</div>
+        <div class="pedido-card__fecha">${fecha(p.creado_en)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1.25rem">
+        <span class="badge badge--${p.estado}">${capitalizar(p.estado)}</span>
+        <div class="pedido-card__total">${fmt(p.total)}</div>
+      </div>
+    </div>`).join('') + `</div>`;
+}
+
+const capitalizar = (s) => String(s??'').charAt(0).toUpperCase() + String(s??'').slice(1);
+const fecha = (s) => s ? new Date(s).toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+const fmt   = (v) => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP'}).format(v??0);
+</script>
+</body>
+</html>
